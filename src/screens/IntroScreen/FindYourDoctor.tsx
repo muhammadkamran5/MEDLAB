@@ -1,6 +1,6 @@
 import {Image, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-
+import styles from './styles';
 const FindyourDoctor = () => {
   return (
     <View style={styles.container}>
@@ -17,18 +17,4 @@ const FindyourDoctor = () => {
 
 export default FindyourDoctor;
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 114,
-  },
-  header: {
-    // flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 14,
-  },
-});
-export {styles};
+

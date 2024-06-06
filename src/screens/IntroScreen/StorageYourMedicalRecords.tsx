@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View , Image } from 'react-native'
 import React from 'react'
-import { styles } from './FindYourDoctor'
+import styles from './styles';
 const StorageyourMedicalRecords = () => {
   return (
     <View style={styles.container}>
