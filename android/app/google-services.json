@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "610879164401",
+    "project_id": "medapp-8e9e1",
+    "storage_bucket": "medapp-8e9e1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610879164401:android:7a32a3b785d15853c1fe50",
+        "android_client_info": {
+          "package_name": "com.medlab"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610879164401-0kbiavpnla3jdr653cl9i0pmau062m3e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.medlab",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "610879164401-4jnns81ehqfcjelpg7m1jj0gtck1pfi9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBfQwKOby9_FD7PYcfeNRzeRQSmOh6ZTHI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610879164401-4jnns81ehqfcjelpg7m1jj0gtck1pfi9.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

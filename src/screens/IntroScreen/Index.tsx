@@ -29,15 +29,6 @@ const IntroScreen = () => {
         renderSkipButton={() => <Text style={{marginTop: 10}}>Skip</Text>}
         renderDoneButton={() => <Text style={{marginTop: 10}}>Next</Text>}
       />
-      {/* <SwiperFlatList
-        autoplay
-        autoplayDelay={2}
-        autoplayLoop
-        index={2}
-        showPagination
-        data={components}
-        renderItem={({item}) => item}
-      /> */}
     </View>
   );
 };
