@@ -1,32 +1,42 @@
 import {Image, StyleSheet, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {SvgUri} from 'react-native-svg';
 import auth from '@react-native-firebase/auth';
 import {Text} from 'react-native-paper';
 import Logo from '../../../assets/medlablogo/medlablogo.svg';
 import {Button} from 'react-native-paper';
 import Spacer from '../../components/Spacer';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
+const MainSignin = ({navigation}: any) => {
+  useEffect(() => {
+    const unsubscribe = auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log('User signed in: ', user);
+        navigation.navigate('LocationInput')
+      } else {
+        console.log('No user is signed in.');
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
-
-
-const MainSignin = () => {
   async function onGoogleButtonPress() {
     try {
-        GoogleSignin.configure({
-            webClientId: '"610879164401-4jnns81ehqfcjelpg7m1jj0gtck1pfi9.apps.googleusercontent.com',
-          });
-      // Check if your device supports Google Play
-      var result = await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-      console.log("Resilt__  "+ result);
-      // Get the user's ID token
+      GoogleSignin.configure({
+        webClientId:
+          '610879164401-4jnns81ehqfcjelpg7m1jj0gtck1pfi9.apps.googleusercontent.com',
+      });
+
+      var result = await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+
+      console.log('Resilt__  ' + result);
       const {idToken} = await GoogleSignin.signIn();
 
-      // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-      // Sign-in the user with the credential
       await auth().signInWithCredential(googleCredential);
       console.log('Signed in with Google!');
     } catch (error) {
@@ -47,7 +57,8 @@ const MainSignin = () => {
         <Button
           mode="contained"
           buttonColor="#225B6E"
-          style={styles.signInNumber}>
+          style={styles.signInNumber}
+          onPress={() => navigation.navigate('SignInPhone')}>
           Sign in with mobile number
         </Button>
         <Text style={styles.orText}>or</Text>

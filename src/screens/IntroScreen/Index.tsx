@@ -11,7 +11,7 @@ import DiscussInTheCommunity from './DiscussInTheCommunity';
 import FindyourDoctor from './FindYourDoctor';
 import StorageyourMedicalRecords from './StorageYourMedicalRecords';
 import AppIntroSlider from 'react-native-app-intro-slider';
-const IntroScreen = () => {
+const IntroScreen = (props: any) => {
   const components = [
     <FindyourDoctor />,
     <StorageyourMedicalRecords />,
@@ -28,6 +28,9 @@ const IntroScreen = () => {
         showSkipButton={true}
         renderSkipButton={() => <Text style={{marginTop: 10}}>Skip</Text>}
         renderDoneButton={() => <Text style={{marginTop: 10}}>Next</Text>}
+        onDone={() => {
+          props.setShow(false);
+        }}
       />
     </View>
   );

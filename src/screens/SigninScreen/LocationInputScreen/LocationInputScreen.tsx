@@ -11,13 +11,15 @@ const LocationInputScreen = () => {
         <Logo />
         <View>
           <Text style={styles.welcomeText}>Location</Text>
-          <Text style={styles.siginText}>
-            Please Enter your Location
-          </Text>
+          <Text style={styles.siginText}>Please Enter your Location</Text>
         </View>
       </View>
       <View>
-        <TextInput mode="outlined" label={'Enter your Location'} />
+        <TextInput
+          mode="outlined"
+          label={'Enter your Location'}
+          left={<TextInput.Icon icon="map-marker" />}
+        />
         <Spacer height={10} />
         <Button
           mode="contained"
@@ -29,7 +31,9 @@ const LocationInputScreen = () => {
       <View style={styles.agreeTextContainer}>
         <View style={styles.agreeText}>
           <Button mode="text">
-            <Text style={{textDecorationLine: 'underline' , color: '#225B6E'}}>Cancel</Text>
+            <Text style={{textDecorationLine: 'underline', color: '#225B6E'}}>
+              Cancel
+            </Text>
           </Button>
         </View>
       </View>

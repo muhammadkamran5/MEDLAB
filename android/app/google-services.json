@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "610879164401",
+    "firebase_url": "https://medapp-8e9e1-default-rtdb.firebaseio.com",
     "project_id": "medapp-8e9e1",
     "storage_bucket": "medapp-8e9e1.appspot.com"
   },
@@ -14,11 +15,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "610879164401-0kbiavpnla3jdr653cl9i0pmau062m3e.apps.googleusercontent.com",
+          "client_id": "610879164401-dnhaatjluf4j0l734b02lu92aiabg63p.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.medlab",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "certificate_hash": "f8d008e6d94441dc84967439273c670b20026528"
           }
         },
         {

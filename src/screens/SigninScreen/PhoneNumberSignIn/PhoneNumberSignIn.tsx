@@ -4,7 +4,7 @@ import {Button, TextInput} from 'react-native-paper';
 import Logo from '../../../../assets/medlablogo/medlablogo.svg';
 import Spacer from '../../../components/Spacer';
 
-const PhoneNumberSignIn = () => {
+const PhoneNumberSignIn = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.mainContent}>
@@ -28,8 +28,10 @@ const PhoneNumberSignIn = () => {
       </View>
       <View style={styles.agreeTextContainer}>
         <View style={styles.agreeText}>
-          <Button mode="text">
-            <Text style={{textDecorationLine: 'underline' , color: '#225B6E'}}>Cancel</Text>
+          <Button mode="text" onPress={()=>navigation.goBack()}>
+            <Text style={{textDecorationLine: 'underline', color: '#225B6E'}}>
+              Cancel
+            </Text>
           </Button>
         </View>
       </View>
