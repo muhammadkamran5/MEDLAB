@@ -4,7 +4,7 @@ import {Button, TextInput} from 'react-native-paper';
 import Logo from '../../../../assets/medlablogo/medlablogo.svg';
 import Spacer from '../../../components/Spacer';
 
-const LocationInputScreen = () => {
+const LocationInputScreen = ({navigation}: any) => {
   return (
     <View style={styles.container}>
       <View style={styles.mainContent}>
@@ -24,7 +24,8 @@ const LocationInputScreen = () => {
         <Button
           mode="contained"
           buttonColor="#225B6E"
-          style={styles.signInNumber}>
+          style={styles.signInNumber}
+          onPress={() => navigation.navigate('Home')}>
           Continue
         </Button>
       </View>

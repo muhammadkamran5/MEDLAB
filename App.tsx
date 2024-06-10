@@ -1,3 +1,4 @@
+import 'react-native-gesture-handler';
 import React, {useEffect} from 'react';
 import SplashScreen from 'react-native-splash-screen';
 import MainSignin from './src/screens/SigninScreen/MainSignin';
@@ -6,6 +7,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import PhoneNumberSignIn from './src/screens/SigninScreen/PhoneNumberSignIn/PhoneNumberSignIn';
 import LocationInputScreen from './src/screens/SigninScreen/LocationInputScreen/LocationInputScreen';
+import HomeScreen from './src/screens/HomeScreen/HomeScreen';
+import BottomNavigation from './src/components/BottomNavigation';
 
 const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
@@ -38,6 +41,7 @@ function App(): React.JSX.Element {
           options={{headerShown: false}}
           component={LocationInputScreen}
         />
+        <Stack.Screen name='Home' component={BottomNavigation} options={{headerShown : false}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
