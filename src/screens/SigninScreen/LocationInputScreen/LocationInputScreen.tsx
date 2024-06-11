@@ -25,7 +25,7 @@ const LocationInputScreen = ({navigation}: any) => {
           mode="contained"
           buttonColor="#225B6E"
           style={styles.signInNumber}
-          onPress={() => navigation.navigate('Home')}>
+          onPress={() => navigation.navigate('BottomNavigation')}>
           Continue
         </Button>
       </View>

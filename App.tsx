@@ -41,7 +41,7 @@ function App(): React.JSX.Element {
           options={{headerShown: false}}
           component={LocationInputScreen}
         />
-        <Stack.Screen name='Home' component={BottomNavigation} options={{headerShown : false}} />
+        <Stack.Screen name='BottomNavigation' component={BottomNavigation} options={{headerShown : false}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

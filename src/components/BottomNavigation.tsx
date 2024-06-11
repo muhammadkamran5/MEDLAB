@@ -7,6 +7,7 @@ import UserIcon from '../../assets/User.svg';
 
 import NotificationScreen from '../screens/NotificationScreen/NotificationScreen';
 import ProfileScreen from '../screens/ProfileScreen/ProfileScreen';
+import HomeScreenNavigation from '../screens/HomeScreen/HomeScreenNavigation/HomeScreenNavigation';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,7 +16,7 @@ function BottomNavigation() {
     <Tab.Navigator screenOptions={{headerShown: false, tabBarShowLabel: false}}>
       <Tab.Screen
         name="Home"
-        component={HomeScreen}
+        component={HomeScreenNavigation}
         options={{
           tabBarIcon: ({focused}) =>  <HomeIcon fill={focused ? 'blue' : 'gray'} />,
         }}
