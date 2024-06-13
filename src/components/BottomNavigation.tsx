@@ -18,21 +18,21 @@ function BottomNavigation() {
         name="Home"
         component={HomeScreenNavigation}
         options={{
-          tabBarIcon: ({focused}) =>  <HomeIcon fill={focused ? 'blue' : 'gray'} />,
+          tabBarIcon: ({focused}) =>  <HomeIcon fill={focused ? '#225B6E' : 'gray'} />,
         }}
       />
       <Tab.Screen
         name="Notifications"
         component={NotificationScreen}
         options={{
-          tabBarIcon: ({focused}) => <NotificationIcon fill={focused ? 'blue' : 'gray'} />,
+          tabBarIcon: ({focused}) => <NotificationIcon fill={focused ? '#225B6E' : 'gray'} />,
         }}
       />
       <Tab.Screen
         name="Profile"
         component={ProfileScreen}
         options={{
-          tabBarIcon: ({focused}) => <UserIcon fill={focused ? 'blue' : 'gray'} />,
+          tabBarIcon: ({focused}) => <UserIcon fill={focused ? '#225B6E' : 'gray'} />,
         }}
       />
     </Tab.Navigator>
