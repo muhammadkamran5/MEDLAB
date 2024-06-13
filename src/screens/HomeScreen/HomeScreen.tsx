@@ -57,6 +57,7 @@ const HomeScreen = ({navigation}: any) => {
         <Appbar.Action icon="magnify" onPress={() => {}} />
         <Appbar.Action icon="dots-vertical" onPress={() => {}} />
       </Appbar.Header>
+      
       <SearchBar
         value={searchText}
         placeholder="Search"
