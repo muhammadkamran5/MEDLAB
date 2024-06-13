@@ -1,0 +1,37 @@
+[
+    {
+        "type": "appointment_confirmation",
+        "message": "Your appointment with Dr. Smith on June 15, 2024, at 10:00 AM has been confirmed.",
+        "timestamp": "2024-06-13T08:00:00Z"
+    },
+    {
+        "type": "appointment_reminder",
+        "message": "Reminder: You have an appointment with Dr. Smith tomorrow at 10:00 AM. Please arrive 10 minutes early.",
+        "timestamp": "2024-06-14T08:00:00Z"
+    },
+    {
+        "type": "appointment_cancellation",
+        "message": "Your appointment with Dr. Smith on June 15, 2024, at 10:00 AM has been cancelled. Please reschedule at your earliest convenience.",
+        "timestamp": "2024-06-13T12:00:00Z"
+    },
+    {
+        "type": "new_message_from_doctor",
+        "message": "Dr. Smith has sent you a new message regarding your recent lab results. Please check your inbox.",
+        "timestamp": "2024-06-13T14:00:00Z"
+    },
+    {
+        "type": "prescription_ready",
+        "message": "Your prescription for medication XYZ is now ready for pickup at your chosen pharmacy.",
+        "timestamp": "2024-06-13T16:00:00Z"
+    },
+    {
+        "type": "follow_up_reminder",
+        "message": "It's time for your follow-up appointment. Please schedule a visit with Dr. Smith at your earliest convenience.",
+        "timestamp": "2024-06-13T18:00:00Z"
+    },
+    {
+        "type": "health_tip",
+        "message": "Health Tip: Remember to stay hydrated and take regular breaks if you're working long hours at your desk.",
+        "timestamp": "2024-06-13T20:00:00Z"
+    }
+]
