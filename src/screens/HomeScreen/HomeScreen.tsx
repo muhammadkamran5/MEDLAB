@@ -1,5 +1,11 @@
 import * as React from 'react';
-import {Appbar, Button, Card, IconButton, Text} from 'react-native-paper';
+import {
+  Appbar,
+  Button,
+  Card,
+  IconButton,
+  Text,
+} from 'react-native-paper';
 import {View, StyleSheet, Dimensions} from 'react-native';
 import MenuBarIcon from '../../../assets/menuBarIcon.svg';
 import Spacer from '../../components/Spacer';
@@ -57,7 +63,7 @@ const HomeScreen = ({navigation}: any) => {
         <Appbar.Action icon="magnify" onPress={() => {}} />
         <Appbar.Action icon="dots-vertical" onPress={() => {}} />
       </Appbar.Header>
-      
+
       <SearchBar
         value={searchText}
         placeholder="Search"

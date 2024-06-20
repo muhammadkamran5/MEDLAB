@@ -2,14 +2,15 @@ import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {Button} from 'react-native-paper';
 
-const ButtonSecondary = ({children}: any, props: any) => {
+const ButtonSecondary = (props: any) => {
   return (
     <Button
       buttonColor="#FFFFFF"
+      rippleColor={'#fff'}
       {...props}
       style={styles.button}
       textColor="#225B6E">
-      {children}
+      {props.children}
     </Button>
   );
 };

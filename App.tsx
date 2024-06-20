@@ -7,7 +7,6 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import PhoneNumberSignIn from './src/screens/SigninScreen/PhoneNumberSignIn/PhoneNumberSignIn';
 import LocationInputScreen from './src/screens/SigninScreen/LocationInputScreen/LocationInputScreen';
-import HomeScreen from './src/screens/HomeScreen/HomeScreen';
 import BottomNavigation from './src/components/BottomNavigation';
 
 const Stack = createNativeStackNavigator();
