@@ -2,7 +2,7 @@ import {StyleSheet, TextInput, View} from 'react-native';
 import {Text} from 'react-native-paper';
 import React from 'react';
 
-const KInput = ({label, value, multiline}: any, props: any) => {
+const KInput = ({label, value, multiline , ...props}: any, ) => {
   return (
     <View>
       <Text variant='bodyLarge'>{label}:</Text>
@@ -10,6 +10,7 @@ const KInput = ({label, value, multiline}: any, props: any) => {
         value={value}
         style={styles.inputField}
         multiline={multiline}
+        {...props}
       />
     </View>
   );

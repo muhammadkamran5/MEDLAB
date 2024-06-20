@@ -8,7 +8,8 @@ const ButtonSecondary = (props: any) => {
       buttonColor="#FFFFFF"
       rippleColor={'#fff'}
       {...props}
-      style={styles.button}
+      style={{borderRadius: 10}}
+      labelStyle={styles.button}
       textColor="#225B6E">
       {props.children}
     </Button>
@@ -19,7 +20,6 @@ export default ButtonSecondary;
 
 const styles = StyleSheet.create({
   button: {
-    borderRadius: 10,
     paddingHorizontal: 20,
     paddingVertical: 5,
   },

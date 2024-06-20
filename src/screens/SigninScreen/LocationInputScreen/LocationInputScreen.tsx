@@ -18,7 +18,12 @@ const LocationInputScreen = ({navigation}: any) => {
         <TextInput
           mode="outlined"
           label={'Enter your Location'}
-          left={<TextInput.Icon icon="map-marker" />}
+          left={
+            <TextInput.Icon
+              onPress={() => navigation.navigate('SelectLocation')}
+              icon="map-marker"
+            />
+          }
         />
         <Spacer height={10} />
         <Button
