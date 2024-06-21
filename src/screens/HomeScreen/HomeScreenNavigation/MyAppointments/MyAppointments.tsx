@@ -26,7 +26,8 @@ const MyAppointments = ({navigation}: any) => {
           mode="contained-tonal"
           buttonColor={'#225B6E'}
           textColor="#FFFFFF"
-          style={styles.newAppointmentButton}>
+          style={styles.newAppointmentButton}
+          onPress={() => navigation.navigate('ShowSpecilistDoctors')}>
           New Appointment
         </Button>
       </View>

@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "title": "Dr. Jane Smith",
+    "occupation": "Cardiologist",
+    "location": "New York, NY",
+    "ratingCount": 125
+  },
+  {
+    "id": 2,
+    "title": "Dr. Michael Lee",
+    "occupation": "Dermatologist",
+    "location": "Los Angeles, CA",
+    "ratingCount": 87
+  },
+  {
+    "id": 3,
+    "title": "Dr. Maria Garcia",
+    "occupation": "Pediatrician",
+    "location": "Chicago, IL",
+    "ratingCount": 210
+  },
+  {
+    "id": 4,
+    "title": "Dr. David Patel",
+    "occupation": "Neurologist",
+    "location": "Houston, TX",
+    "ratingCount": 54
+  },
+  {
+    "id": 5,
+    "title": "Dr. Emily Wang",
+    "occupation": "Ophthalmologist",
+    "location": "Seattle, WA",
+    "ratingCount": 168
+  }
+]

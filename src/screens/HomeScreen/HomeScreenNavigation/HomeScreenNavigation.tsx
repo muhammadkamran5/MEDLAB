@@ -6,6 +6,7 @@ import Records from './Records/Records';
 import Community from './Community/Community';
 import Hospitals from './Hospitals/Hospitals';
 import HomeScreen from '../HomeScreen';
+import ShowSpecilistDoctors from './BookNewAppointment/ShowSpecilistDoctors';
 
 const Stack = createNativeStackNavigator();
 const HomeScreenNavigation = () => {
@@ -16,6 +17,7 @@ const HomeScreenNavigation = () => {
       <Stack.Screen name="Records" component={Records} />
       <Stack.Screen name="Community" component={Community} />
       <Stack.Screen name="Hospitals" component={Hospitals} />
+      <Stack.Screen name='ShowSpecilistDoctors' component={ShowSpecilistDoctors} options={{headerShown : false}} />
     </Stack.Navigator>
   );
 };

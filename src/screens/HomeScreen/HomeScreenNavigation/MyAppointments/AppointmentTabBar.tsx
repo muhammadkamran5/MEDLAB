@@ -4,50 +4,12 @@ import {TabView, SceneMap, TabBar} from 'react-native-tab-view';
 import UpComing from './UpcomingAppointments/UpComing';
 import Past from './PastAppointments/Past';
 import {Text} from 'react-native-paper';
+import CustomTabBar from '../../../../components/CustomTabBar';
 
 const renderScene = SceneMap({
   first: UpComing,
   second: Past,
 });
-
-const CustomTabBar = (props: any) => {
-  return (
-    <View style={styles.tabBarContainer}>
-      <View>
-        <Text
-          style={props.navigationState.index == 0 && {color: '#225B6E'}}
-          onPress={() => props.jumpTo('first')}>
-          Up Comming
-        </Text>
-        {props.navigationState.index === 0 && (
-          <View
-            style={{
-              height: 2,
-              backgroundColor: '#225B6E',
-              marginTop: 3,
-              width: '80%',
-            }}></View>
-        )}
-      </View>
-      <View>
-        <Text
-          style={props.navigationState.index == 1 && {color: '#225B6E'}}
-          onPress={() => props.jumpTo('second')}>
-          Past
-        </Text>
-        {props.navigationState.index === 1 && (
-          <View
-            style={{
-              height: 2,
-              backgroundColor: '#225B6E',
-              marginTop: 3,
-              width: '80%',
-            }}></View>
-        )}
-      </View>
-    </View>
-  );
-};
 
 export default function AppointmentTabBar() {
   const layout = useWindowDimensions();
@@ -63,15 +25,13 @@ export default function AppointmentTabBar() {
       navigationState={{index, routes}}
       renderScene={renderScene}
       onIndexChange={setIndex}
-      initialLayout={{width: layout.width}}
-      renderTabBar={CustomTabBar}
+      initialLayout={{width: layout.width }}
+      renderTabBar={(props) => {
+        return <CustomTabBar {...props} tabs={routes} />;
+      }}
     />
   );
 }
 const styles = StyleSheet.create({
-  tabBarContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: 20,
-  },
+
 });

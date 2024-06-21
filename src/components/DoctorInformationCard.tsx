@@ -3,12 +3,20 @@ import React from 'react';
 import {Text} from 'react-native-paper';
 import StarRating from 'react-native-star-rating-widget';
 
+
+interface cardProps {
+  title: string;
+  occopation: string;
+  location: string;
+  ratingCount: number;
+}
+
 const DoctorInformationCard = ({
   title,
   occopation,
   location,
   ratingCount,
-}: any) => {
+}: cardProps) => {
   return (
     <View style={styles.cardContainer}>
       <Image
@@ -25,7 +33,7 @@ const DoctorInformationCard = ({
         </Text>
         <View style={styles.starRating}>
           <StarRating rating={3.5} onChange={() => {}} starSize={20} />
-          <Text>(200)</Text>
+          <Text>({ratingCount})</Text>
         </View>
       </View>
     </View>
@@ -45,7 +53,7 @@ const styles = StyleSheet.create({
   },
   image: {
     height: '100%',
-    width: 80,
+    width: '32%',
   },
   starRating: {
     flexDirection: 'row',

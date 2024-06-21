@@ -1,14 +1,27 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, { ReactNode } from 'react';
 import {Button} from 'react-native-paper';
 
-const ButtonPrimary = ({children, style, ...props}: any) => {
+interface ButtonPrimaryProps {
+  children: ReactNode;
+  buttonColor?: string;
+  textColor?: string;
+
+}
+
+const ButtonPrimary = ({
+  children,
+  style,
+  buttonColor,
+  textColor,
+  ...props
+}: any) => {
   return (
     <Button
-      buttonColor="#225B6E"
+      buttonColor={buttonColor || '#225B6E'}
       {...props}
-      style={[{borderRadius: 10}, style]} 
-      textColor="#fff"
+      style={[{borderRadius: 5}, style]}
+      textColor={textColor || '#fff'}
       labelStyle={styles.button}>
       {children}
     </Button>

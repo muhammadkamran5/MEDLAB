@@ -9,6 +9,9 @@ import PhoneNumberSignIn from './src/screens/SigninScreen/PhoneNumberSignIn/Phon
 import LocationInputScreen from './src/screens/SigninScreen/LocationInputScreen/LocationInputScreen';
 import BottomNavigation from './src/components/BottomNavigation';
 import SetUserLocation from './src/screens/SigninScreen/LocationInputScreen/SetUserLocation';
+import ShowSpecilistDoctors from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/ShowSpecilistDoctors';
+import DoctorDetail from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/DoctorDetail';
+import ConfirmAppointment from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/ConfirmAppointment';
 
 const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
@@ -43,6 +46,9 @@ function App(): React.JSX.Element {
         />
         <Stack.Screen name='SelectLocation' component={SetUserLocation} options={{headerShown : false}} />
         <Stack.Screen name='BottomNavigation' component={BottomNavigation} options={{headerShown : false}} />
+        <Stack.Screen name='DoctorDetail' component={DoctorDetail} options={{headerShown : false}} />
+        <Stack.Screen name='ConfirmAppointment' component={ConfirmAppointment} options={{headerShown : false}} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
