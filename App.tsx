@@ -12,6 +12,7 @@ import SetUserLocation from './src/screens/SigninScreen/LocationInputScreen/SetU
 import ShowSpecilistDoctors from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/ShowSpecilistDoctors';
 import DoctorDetail from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/DoctorDetail';
 import ConfirmAppointment from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/ConfirmAppointment';
+import AppointmentConfirmAlert from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/AppointmentConfirmAlert';
 
 const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
@@ -48,6 +49,7 @@ function App(): React.JSX.Element {
         <Stack.Screen name='BottomNavigation' component={BottomNavigation} options={{headerShown : false}} />
         <Stack.Screen name='DoctorDetail' component={DoctorDetail} options={{headerShown : false}} />
         <Stack.Screen name='ConfirmAppointment' component={ConfirmAppointment} options={{headerShown : false}} />
+        <Stack.Screen name='AppointmentConfirmAlert' component={AppointmentConfirmAlert} options={{headerShown : false}} />
         
       </Stack.Navigator>
     </NavigationContainer>

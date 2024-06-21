@@ -1,7 +1,7 @@
-import {StyleSheet, View} from 'react-native';
+import {Pressable, StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Appbar, List, Text} from 'react-native-paper';
-import data from '../../../assets/data.json';
+import data from './data.json';
 import {FlatList} from 'react-native';
 import SearchBar from '../../components/SearchBar';
 import Spacer from '../../components/Spacer';
@@ -31,8 +31,17 @@ const MedLabCommunity = () => {
           renderItem={({item}: any) => {
             return (
               <List.Item
-                title={item.message}
-                right={() => <List.Icon icon={'message'} />}
+                description={item.community_name}
+                descriptionStyle={{fontWeight : 'bold' , fontSize : 14}}
+                title={item.date}
+                right={() => (
+                  <View style={{alignItems: 'flex-end'}}>
+                    <List.Icon icon={'message'} />
+                    <Pressable>
+                      <Text style={{color: '#225B6E'}}>See More {">"}</Text>
+                    </Pressable>
+                  </View>
+                )}
               />
             );
           }}

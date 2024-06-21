@@ -7,6 +7,7 @@ import Community from './Community/Community';
 import Hospitals from './Hospitals/Hospitals';
 import HomeScreen from '../HomeScreen';
 import ShowSpecilistDoctors from './BookNewAppointment/ShowSpecilistDoctors';
+import MedLabCommunity from '../../MedLabCommunity/MedLabCommunity';
 
 const Stack = createNativeStackNavigator();
 const HomeScreenNavigation = () => {
@@ -15,7 +16,7 @@ const HomeScreenNavigation = () => {
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="MyAppointments" component={MyAppointments} />
       <Stack.Screen name="Records" component={Records} />
-      <Stack.Screen name="Community" component={Community} />
+      <Stack.Screen name="Community" component={MedLabCommunity} />
       <Stack.Screen name="Hospitals" component={Hospitals} />
       <Stack.Screen name='ShowSpecilistDoctors' component={ShowSpecilistDoctors} options={{headerShown : false}} />
     </Stack.Navigator>

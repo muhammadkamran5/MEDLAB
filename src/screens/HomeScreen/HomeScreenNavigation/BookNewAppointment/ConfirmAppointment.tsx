@@ -1,13 +1,29 @@
-import {StyleSheet, View} from 'react-native';
+import {
+  FlatList,
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React from 'react';
 import BackIcon from '../../../../../assets/Back.svg';
 import {Appbar, Divider, Icon, IconButton, Text} from 'react-native-paper';
 import Spacer from '../../../../components/Spacer';
 import KInput from '../../../../components/KInput';
+import ButtonPrimary from '../../../../components/ButtonPrimary';
 
 const ConfirmAppointment = ({navigation}: any) => {
+  const data = [
+    {
+      image: require('./Card1.png'),
+    },
+    {
+      image: require('./Card2.png'),
+    },
+  ];
   return (
-    <>
+    <ScrollView>
       <Appbar.Header>
         <Appbar.Action
           icon={() => <BackIcon />}
@@ -44,8 +60,35 @@ const ConfirmAppointment = ({navigation}: any) => {
         <Text variant="headlineSmall" style={{color: '#225B6E'}}>
           Select the card
         </Text>
+        <Spacer height={7} />
+        <FlatList
+          horizontal
+          data={data}
+          renderItem={({item}) => (
+            <View>
+              <Image
+                source={item.image}
+                style={{
+                  borderRadius: 10,
+                  marginRight: 10,
+                }}
+              />
+            </View>
+          )}
+          showsHorizontalScrollIndicator={false}
+        />
+        <Pressable>
+          <Text variant="bodyLarge">Manage Cards {'>'}</Text>
+        </Pressable>
+        <Spacer height={7} />
+
+        <ButtonPrimary
+          style={styles.payButton}
+          onPress={() => navigation.navigate('AppointmentConfirmAlert')}>
+          Pay now
+        </ButtonPrimary>
       </View>
-    </>
+    </ScrollView>
   );
 };
 
@@ -69,5 +112,10 @@ const styles = StyleSheet.create({
     // justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
+  },
+  payButton: {
+    alignSelf: 'center',
+    width: '50%',
+    marginBottom: 20,
   },
 });
