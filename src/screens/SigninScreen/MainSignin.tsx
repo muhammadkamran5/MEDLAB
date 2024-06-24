@@ -7,6 +7,8 @@ import Logo from '../../../assets/medlablogo/medlablogo.svg';
 import {Button} from 'react-native-paper';
 import Spacer from '../../components/Spacer';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import firestore from "@react-native-firebase/firestore"
+
 
 const MainSignin = ({navigation}: any) => {
   useEffect(() => {
@@ -23,27 +25,34 @@ const MainSignin = ({navigation}: any) => {
 
   async function onGoogleButtonPress() {
     try {
-      GoogleSignin.configure({
-        webClientId:
-          '610879164401-4jnns81ehqfcjelpg7m1jj0gtck1pfi9.apps.googleusercontent.com',
-      });
-
-      var result = await GoogleSignin.hasPlayServices({
-        showPlayServicesUpdateDialog: true,
-      });
-
-      console.log('Resilt__  ' + result);
-      const {idToken} = await GoogleSignin.signIn();
-
+      // Ensure Google Play Services are available
+      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+  
+      // Sign in with Google
+      const { idToken } = await GoogleSignin.signIn();
+  
+      // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-      await auth().signInWithCredential(googleCredential);
+  
+      // Sign-in the user with the credential
+      const userCredential = await auth().signInWithCredential(googleCredential);
+      const user = userCredential.user;
+  
+      // Add user details to Firestore
+      await firestore().collection('users').doc(user.uid).set({
+        firstName: user.displayName?.split(" ")[0],
+        lastName: user.displayName?.split(" ")[1],
+        fullName: user.displayName,
+        photo: user.photoURL,
+        email : user.email,
+      });
+  
       console.log('Signed in with Google!');
     } catch (error) {
-      console.error('Google Sign-In error: ', JSON.stringify(error));
+      // Improved error logging
+      console.error('Google Sign-In error: ', error);
     }
   }
-
   return (
     <View style={styles.container}>
       <View style={styles.mainContent}>

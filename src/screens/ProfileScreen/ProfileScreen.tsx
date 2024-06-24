@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Appbar, Button, Text} from 'react-native-paper';
 import Spacer from '../../components/Spacer';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import ButtonPrimary from '../../components/ButtonPrimary';
 import ButtonSecondary from '../../components/ButtonSecondary';
 import KInput from '../../components/KInput';
@@ -15,16 +16,24 @@ const ProfileScreen = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
+  const [bio, setBio] = useState('');
+  const [fullName, setFullName] = useState('');
 
   useEffect(() => {
     const fetchUserData = async () => {
       const user = auth().currentUser;
-      if (user) {
-        setCurrentUser(user);
-        setFirstName(user?.displayName?.split(' ')[0] || '');
-        setLastName(user?.displayName?.split(' ')[1] || '');
-        setEmail(user.email || '');
-        setContactNumber(user.phoneNumber || '');
+      const documentSnapShot = await firestore()
+        .collection('users')
+        .doc(user?.uid)
+        .get();
+
+      if (documentSnapShot.exists) {
+        setCurrentUser(documentSnapShot.data());
+        setFirstName(documentSnapShot.data()?.firstName);
+        setLastName(documentSnapShot.data()?.lastName);
+        setEmail(documentSnapShot.data()?.email);
+        setContactNumber(documentSnapShot.data()?.contactNumber);
+        setBio(documentSnapShot.data()?.bio);
       }
     };
 
@@ -38,8 +47,18 @@ const ProfileScreen = () => {
       await user?.updateProfile({
         displayName: `${firstName} ${lastName}`,
       });
+      await firestore()
+        .collection('users')
+        .doc(user?.uid)
+        .update({
+          firstName: firstName || '',
+          lastName: lastName || '',
+          contactNumber: contactNumber || '',
+          bio: bio || '',
+          fullName: `${firstName} ${lastName}`,
+        });
       setIsEditingMode(false);
-      
+
       setUpdateLoading(false);
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -68,8 +87,8 @@ const ProfileScreen = () => {
       <KInput
         label={'Bio'}
         multiline={true}
-        value="Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore vero enim error similique quia numquam ullam corporis officia odio repellendus aperiam"
-        editable={false}
+        value={bio}
+        onChangeText={(text: any) => setBio(text)}
       />
     </>
   );
@@ -94,13 +113,11 @@ const ProfileScreen = () => {
       </Text>
       <Text variant="titleMedium">Location</Text>
       <Text variant="bodyLarge" style={styles.text}>
-        Lahore
+        {currentUser?.address}
       </Text>
       <Text variant="titleMedium">Bio</Text>
       <Text variant="bodyLarge" style={styles.text}>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Labore vero
-        enim error similique quia numquam ullam corporis officia odio
-        repellendus aperiam
+        {bio}
       </Text>
     </>
   );
@@ -117,14 +134,16 @@ const ProfileScreen = () => {
               <Text variant="headlineMedium">Profile</Text>
               <Spacer height={10} />
               <View style={styles.profileMain}>
-                {currentUser?.photoURL && (
+                {currentUser?.photo && (
                   <Image
-                    source={{uri: currentUser?.photoURL}}
+                    source={{uri: currentUser?.photo}}
                     style={styles.profileImage}
                   />
                 )}
                 <View>
-                  <Text variant="bodyLarge">{currentUser?.displayName}</Text>
+                  <Text variant="bodyLarge">
+                    {firstName} {lastName}
+                  </Text>
                   <Button
                     mode="text"
                     style={{marginHorizontal: -10, alignItems: 'flex-start'}}

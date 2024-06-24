@@ -8,20 +8,31 @@ import SearchBar from '../../../components/SearchBar';
 import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
 
-const SetUserLocation = () => {
+const SetUserLocation = ({navigation}: any) => {
+  const key = 'AIzaSyBOzLbI1W6cUoolrMY6qiNtco2qisO3iKM';
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
+
   const [isPermission, setIsPermission] = useState(false);
   const user = auth().currentUser;
   const updateUserProfile = async () => {
     try {
-      await firestore().collection('userinfo').add({
-        user: user?.uid,
-        location: {
-          longitude,
-          latitude,
-        },
-      });
+      const res = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${key}`,
+      );
+      const locationObj = await res.json();
+      const address = locationObj.results[0].formatted_address;
+      await firestore()
+        .collection('users')
+        .doc(user?.uid)
+        .update({
+          user: user?.uid,
+          location: {
+            longitude,
+            latitude,
+          },
+        });
+      navigation.navigate('LocationInput' , address);
     } catch (e) {
       console.log(e);
     }

@@ -1,10 +1,24 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button, TextInput} from 'react-native-paper';
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
+
 import Logo from '../../../../assets/medlablogo/medlablogo.svg';
 import Spacer from '../../../components/Spacer';
 
-const LocationInputScreen = ({navigation}: any) => {
+const LocationInputScreen = ({route, navigation, ...props}: any) => {
+  const [address, setAddress] = React.useState('');
+  const [allowEditing, setAllowEditing] = React.useState(true);
+
+  useEffect(() => {
+    const data = route.params;
+    if (data) {
+      setAddress(data);
+      setAllowEditing(false);
+    }
+  });
+
   return (
     <View style={styles.container}>
       <View style={styles.mainContent}>
@@ -18,9 +32,14 @@ const LocationInputScreen = ({navigation}: any) => {
         <TextInput
           mode="outlined"
           label={'Enter your Location'}
+          value={address}
+          onChangeText={text => setAddress(text)}
+          editable={allowEditing}
           left={
             <TextInput.Icon
-              onPress={() => navigation.navigate('SelectLocation')}
+              onPress={() => {
+                navigation.navigate('SelectLocation');
+              }}
               icon="map-marker"
             />
           }
@@ -30,7 +49,15 @@ const LocationInputScreen = ({navigation}: any) => {
           mode="contained"
           buttonColor="#225B6E"
           style={styles.signInNumber}
-          onPress={() => navigation.navigate('BottomNavigation')}>
+          onPress={async () => {
+            await firestore()
+              .collection('users')
+              .doc(auth().currentUser?.uid)
+              .update({
+                address: address,
+              });
+            props.setLogin(true);
+          }}>
           Continue
         </Button>
       </View>
