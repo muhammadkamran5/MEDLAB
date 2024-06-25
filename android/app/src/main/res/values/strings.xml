@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MEDLAB</string>
+    <string name="facebook_app_id">61561199500691</string>
+<string name="fb_login_protocol_scheme">fb61561199500691</string>
+<string name="facebook_client_token">e03466f761945c3968743090b2f35d99</string>
+
+
 </resources>

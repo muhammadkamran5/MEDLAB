@@ -5,6 +5,10 @@ import com.facebook.react.ReactActivityDelegate
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint.fabricEnabled
 import com.facebook.react.defaults.DefaultReactActivityDelegate
 import org.devio.rn.splashscreen.SplashScreen; 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+
+// import com.facebook.FacebookSdk;
 
 class MainActivity : ReactActivity() {
 

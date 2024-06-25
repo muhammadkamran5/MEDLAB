@@ -10,7 +10,7 @@ import Spacer from '../../../components/Spacer';
 const LocationInputScreen = ({route, navigation, ...props}: any) => {
   const [address, setAddress] = React.useState('');
   const [allowEditing, setAllowEditing] = React.useState(true);
-
+  console.log(auth().currentUser)
   useEffect(() => {
     const data = route.params;
     if (data) {

@@ -8,7 +8,7 @@ interface cardProps {
   title: string;
   occopation: string;
   location: string;
-  ratingCount: number;
+  ratingCount?: number;
 }
 
 const DoctorInformationCard = ({

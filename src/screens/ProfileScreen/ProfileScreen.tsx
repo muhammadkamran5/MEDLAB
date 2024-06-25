@@ -9,6 +9,7 @@ import ButtonSecondary from '../../components/ButtonSecondary';
 import KInput from '../../components/KInput';
 
 const ProfileScreen = () => {
+  console.log(process.env.GOOGLE_API_KEY)
   const [currentUser, setCurrentUser]: any = useState(null);
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
@@ -16,6 +17,7 @@ const ProfileScreen = () => {
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
+  const [location, setLocation] = useState('');
   const [bio, setBio] = useState('');
   const [fullName, setFullName] = useState('');
 
@@ -34,6 +36,7 @@ const ProfileScreen = () => {
         setEmail(documentSnapShot.data()?.email);
         setContactNumber(documentSnapShot.data()?.contactNumber);
         setBio(documentSnapShot.data()?.bio);
+        setLocation(documentSnapShot.data()?.address);
       }
     };
 
@@ -47,6 +50,14 @@ const ProfileScreen = () => {
       await user?.updateProfile({
         displayName: `${firstName} ${lastName}`,
       });
+      const API_KEY = 'AIzaSyBOzLbI1W6cUoolrMY6qiNtco2qisO3iKM';
+      const res = await fetch(
+        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
+          location,
+        )}&key=AIzaSyBOzLbI1W6cUoolrMY6qiNtco2qisO3iKM`,
+      );
+      const data = await res.json();
+      console.log();
       await firestore()
         .collection('users')
         .doc(user?.uid)
@@ -56,6 +67,11 @@ const ProfileScreen = () => {
           contactNumber: contactNumber || '',
           bio: bio || '',
           fullName: `${firstName} ${lastName}`,
+          location: {
+            latitude: data?.results[0]?.geometry.location.lat,
+            longitude: data?.results[0]?.geometry.location.lng,
+          },
+          address: location,
         });
       setIsEditingMode(false);
 
@@ -83,7 +99,11 @@ const ProfileScreen = () => {
         value={contactNumber}
         onChangeText={(text: any) => setContactNumber(text)}
       />
-      <KInput label={'Location'} value="Lahore" editable={false} />
+      <KInput
+        label={'Location'}
+        value={location}
+        onChangeText={(text: any) => setLocation(text)}
+      />
       <KInput
         label={'Bio'}
         multiline={true}
@@ -113,7 +133,7 @@ const ProfileScreen = () => {
       </Text>
       <Text variant="titleMedium">Location</Text>
       <Text variant="bodyLarge" style={styles.text}>
-        {currentUser?.address}
+        {location}
       </Text>
       <Text variant="titleMedium">Bio</Text>
       <Text variant="bodyLarge" style={styles.text}>

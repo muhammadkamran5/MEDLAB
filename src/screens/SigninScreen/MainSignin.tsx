@@ -7,15 +7,15 @@ import Logo from '../../../assets/medlablogo/medlablogo.svg';
 import {Button} from 'react-native-paper';
 import Spacer from '../../components/Spacer';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
-import firestore from "@react-native-firebase/firestore"
-
+import firestore from '@react-native-firebase/firestore';
+import {LoginManager, AccessToken} from 'react-native-fbsdk-next';
 
 const MainSignin = ({navigation}: any) => {
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(user => {
       if (user) {
         console.log('User signed in: ', user);
-        navigation.navigate('LocationInput')
+        navigation.navigate('LocationInput');
       } else {
         console.log('No user is signed in.');
       }
@@ -26,31 +26,71 @@ const MainSignin = ({navigation}: any) => {
   async function onGoogleButtonPress() {
     try {
       // Ensure Google Play Services are available
-      await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-  
+      await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
+
       // Sign in with Google
-      const { idToken } = await GoogleSignin.signIn();
-  
+      const {idToken} = await GoogleSignin.signIn();
+
       // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-  
+
       // Sign-in the user with the credential
-      const userCredential = await auth().signInWithCredential(googleCredential);
+      const userCredential = await auth().signInWithCredential(
+        googleCredential,
+      );
       const user = userCredential.user;
-  
+
       // Add user details to Firestore
-      await firestore().collection('users').doc(user.uid).set({
-        firstName: user.displayName?.split(" ")[0],
-        lastName: user.displayName?.split(" ")[1],
-        fullName: user.displayName,
-        photo: user.photoURL,
-        email : user.email,
-      });
-  
+      const userDoc = await firestore().collection('users').doc(user.uid).get();
+      if (!userDoc.exists) {
+        await firestore()
+          .collection('users')
+          .doc(user.uid)
+          .set({
+            firstName: user.displayName?.split(' ')[0],
+            lastName: user.displayName?.split(' ')[1],
+            fullName: user.displayName,
+            photo: user.photoURL,
+            email: user.email,
+          });
+      }
+
       console.log('Signed in with Google!');
     } catch (error) {
       // Improved error logging
       console.error('Google Sign-In error: ', error);
+    }
+  }
+  async function onFacebookButtonPress() {
+    try {
+      // Attempt login with permissions
+      console.log('hello')
+      const result = await LoginManager.logInWithPermissions([
+        'public_profile',
+        'email',
+      ]);
+      console.log(result)
+
+      if (result.isCancelled) {
+        // throw 'User cancelled the login process';
+        console.log('Cancel the login')
+      }
+
+      // Once signed in, get the users AccessToken
+      const data :any= await AccessToken.getCurrentAccessToken();
+      // if (!data) {
+      //   throw 'Something went wrong obtaining access token';
+      // }
+
+      // Create a Firebase credential with the AccessToken
+      const facebookCredential = auth.FacebookAuthProvider.credential(
+        data?.accessToken,
+      );
+
+      // Sign-in the user with the credential
+      return auth().signInWithCredential(facebookCredential);
+    } catch (e) {
+      console.log('how ');
     }
   }
   return (
@@ -75,7 +115,8 @@ const MainSignin = ({navigation}: any) => {
           mode="contained"
           buttonColor="#3A559F"
           style={styles.signInNumber}
-          icon={'facebook'}>
+          icon={'facebook'}
+          onPress={onFacebookButtonPress}>
           Sign in with Facebook
         </Button>
         <Spacer height={14} />
