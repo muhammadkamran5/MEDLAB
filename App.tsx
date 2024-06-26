@@ -14,9 +14,14 @@ import DoctorDetail from './src/screens/HomeScreen/HomeScreenNavigation/BookNewA
 import ConfirmAppointment from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/ConfirmAppointment';
 import AppointmentConfirmAlert from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/AppointmentConfirmAlert';
 import auth from '@react-native-firebase/auth';
+import {useDispatch} from 'react-redux';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {fetchCurrentUser} from './src/redux/reducers/userReducer';
 
 const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
   const [showIntro, setShowIntro] = React.useState(true);
   const [isLogin, setIsLogin] = React.useState(false);
   useEffect(() => {
@@ -25,6 +30,7 @@ function App(): React.JSX.Element {
     if (user) {
       setIsLogin(true);
       setShowIntro(false);
+      dispatch(fetchCurrentUser(user.uid));
     }
   }, []);
 
@@ -65,14 +71,16 @@ function App(): React.JSX.Element {
               component={MainSignin}
               options={{headerShown: false}}
             />
-            <Stack.Screen name="LocationInput" options={{headerShown: false}}>
-              {props => <LocationInputScreen {...props} setLogin={setIsLogin}/>}
-            </Stack.Screen>
-            <Stack.Screen
-              name="SelectLocation"
-              component={SetUserLocation}
+               <Stack.Screen
+              name="BottomNavigation"
+              component={BottomNavigation}
               options={{headerShown: false}}
             />
+            <Stack.Screen name="LocationInput" options={{headerShown: false}}>
+              {props => (
+                <LocationInputScreen {...props} setLogin={setIsLogin} />
+              )}
+            </Stack.Screen>
             <Stack.Screen
               name="SignInPhone"
               options={{headerShown: false}}
@@ -80,6 +88,11 @@ function App(): React.JSX.Element {
             />
           </>
         )}
+        <Stack.Screen
+          name="SelectLocation"
+          component={SetUserLocation}
+          options={{headerShown: false}}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

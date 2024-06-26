@@ -7,8 +7,13 @@ import auth from '@react-native-firebase/auth';
 import SearchBar from '../../../components/SearchBar';
 import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
+import { updateUser } from '../../../redux/reducers/userReducer';
+import {useDispatch, useSelector} from 'react-redux';
+import {ThunkDispatch} from '@reduxjs/toolkit';
 
-const SetUserLocation = ({navigation}: any) => {
+const SetUserLocation = ({route, navigation}: any) => {
+  const setAddress = route.params;
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const key = 'AIzaSyBOzLbI1W6cUoolrMY6qiNtco2qisO3iKM';
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
@@ -22,17 +27,18 @@ const SetUserLocation = ({navigation}: any) => {
       );
       const locationObj = await res.json();
       const address = locationObj.results[0].formatted_address;
-      await firestore()
-        .collection('users')
-        .doc(user?.uid)
-        .update({
-          user: user?.uid,
-          location: {
-            longitude,
-            latitude,
-          },
-        });
-      navigation.navigate('LocationInput' , address);
+      await firestore().collection('users').doc(user?.uid).update({
+        user: user?.uid,
+        location: {
+          longitude,
+          latitude,
+        },
+      });
+      setAddress(address);
+      const userData = { isFirstTime: 'no'};
+      const userID = user?.uid;
+      dispatch(updateUser({userData , userID}))
+      navigation.goBack()
     } catch (e) {
       console.log(e);
     }
@@ -143,3 +149,4 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+

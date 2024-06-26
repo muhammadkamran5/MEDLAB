@@ -1,16 +1,25 @@
 import {Image, ScrollView, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Appbar, Button, Text} from 'react-native-paper';
+import {
+  ActivityIndicator,
+  Appbar,
+  Button,
+  Text,
+  TextInput,
+} from 'react-native-paper';
 import Spacer from '../../components/Spacer';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import ButtonPrimary from '../../components/ButtonPrimary';
 import ButtonSecondary from '../../components/ButtonSecondary';
 import KInput from '../../components/KInput';
+import {useDispatch, useSelector} from 'react-redux';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {updateUser} from '../../redux/reducers/userReducer';
 
-const ProfileScreen = () => {
-  console.log(process.env.GOOGLE_API_KEY)
-  const [currentUser, setCurrentUser]: any = useState(null);
+const ProfileScreen = ({navigation}: any) => {
+  const user = useSelector((state: any) => state.user.currentUser);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const [isEditingMode, setIsEditingMode] = useState(false);
   const [updateLoading, setUpdateLoading] = useState(false);
   const [firstName, setFirstName] = useState('');
@@ -23,31 +32,25 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const user = auth().currentUser;
-      const documentSnapShot = await firestore()
-        .collection('users')
-        .doc(user?.uid)
-        .get();
-
-      if (documentSnapShot.exists) {
-        setCurrentUser(documentSnapShot.data());
-        setFirstName(documentSnapShot.data()?.firstName);
-        setLastName(documentSnapShot.data()?.lastName);
-        setEmail(documentSnapShot.data()?.email);
-        setContactNumber(documentSnapShot.data()?.contactNumber);
-        setBio(documentSnapShot.data()?.bio);
-        setLocation(documentSnapShot.data()?.address);
+      if (user) {
+        setFirstName(user?.firstName);
+        setLastName(user?.lastName);
+        setEmail(user?.email);
+        setContactNumber(user?.contactNumber);
+        setBio(user?.bio);
+        setLocation(user?.address);
+        setFullName(user?.fullName);
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [user]);
 
   const updateProfile = async () => {
-    const user = auth().currentUser;
+    const u = auth().currentUser;
     try {
       setUpdateLoading(true);
-      await user?.updateProfile({
+      await u?.updateProfile({
         displayName: `${firstName} ${lastName}`,
       });
       const API_KEY = 'AIzaSyBOzLbI1W6cUoolrMY6qiNtco2qisO3iKM';
@@ -56,23 +59,23 @@ const ProfileScreen = () => {
           location,
         )}&key=AIzaSyBOzLbI1W6cUoolrMY6qiNtco2qisO3iKM`,
       );
+
       const data = await res.json();
       console.log();
-      await firestore()
-        .collection('users')
-        .doc(user?.uid)
-        .update({
-          firstName: firstName || '',
-          lastName: lastName || '',
-          contactNumber: contactNumber || '',
-          bio: bio || '',
-          fullName: `${firstName} ${lastName}`,
-          location: {
-            latitude: data?.results[0]?.geometry.location.lat,
-            longitude: data?.results[0]?.geometry.location.lng,
-          },
-          address: location,
-        });
+      const userData = {
+        firstName: firstName || '',
+        lastName: lastName || '',
+        contactNumber: contactNumber || '',
+        bio: bio || '',
+        fullName: `${firstName} ${lastName}`,
+        location: {
+          latitude: data?.results[0]?.geometry.location.lat,
+          longitude: data?.results[0]?.geometry.location.lng,
+        },
+        address: location,
+      };
+      const userID = u?.uid;
+      dispatch(updateUser({userData, userID}));
       setIsEditingMode(false);
 
       setUpdateLoading(false);
@@ -99,10 +102,19 @@ const ProfileScreen = () => {
         value={contactNumber}
         onChangeText={(text: any) => setContactNumber(text)}
       />
-      <KInput
-        label={'Location'}
+      <TextInput
+        mode="outlined"
+        label={'Enter your Location'}
         value={location}
-        onChangeText={(text: any) => setLocation(text)}
+        onChangeText={text => setLocation(text)}
+        left={
+          <TextInput.Icon
+            onPress={() => {
+              navigation.navigate('SelectLocation' , setLocation);
+            }}
+            icon="map-marker"
+          />
+        }
       />
       <KInput
         label={'Bio'}
@@ -129,7 +141,7 @@ const ProfileScreen = () => {
       </Text>
       <Text variant="titleMedium">Contact Number</Text>
       <Text variant="bodyLarge" style={styles.text}>
-        {contactNumber || '+923099632609'}
+        {contactNumber}
       </Text>
       <Text variant="titleMedium">Location</Text>
       <Text variant="bodyLarge" style={styles.text}>
@@ -145,18 +157,18 @@ const ProfileScreen = () => {
   return (
     <>
       <Appbar.Header>
-        <Appbar.BackAction />
+        <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
       <ScrollView style={{flex: 1}}>
-        {currentUser ? (
+        {user ? (
           <>
             <View style={styles.container}>
               <Text variant="headlineMedium">Profile</Text>
               <Spacer height={10} />
               <View style={styles.profileMain}>
-                {currentUser?.photo && (
+                {user?.photo && (
                   <Image
-                    source={{uri: currentUser?.photo}}
+                    source={{uri: user?.photo}}
                     style={styles.profileImage}
                   />
                 )}

@@ -7,16 +7,14 @@ import auth from '@react-native-firebase/auth';
 import Logo from '../../../../assets/medlablogo/medlablogo.svg';
 import Spacer from '../../../components/Spacer';
 
-const LocationInputScreen = ({route, navigation, ...props}: any) => {
+const LocationInputScreen = ({navigation, ...props}: any) => {
   const [address, setAddress] = React.useState('');
   const [allowEditing, setAllowEditing] = React.useState(true);
   console.log(auth().currentUser)
   useEffect(() => {
-    const data = route.params;
-    if (data) {
-      setAddress(data);
-      setAllowEditing(false);
-    }
+    // if (address) {
+    //   setAllowEditing(false);
+    // }
   });
 
   return (
@@ -38,7 +36,7 @@ const LocationInputScreen = ({route, navigation, ...props}: any) => {
           left={
             <TextInput.Icon
               onPress={() => {
-                navigation.navigate('SelectLocation');
+                navigation.navigate('SelectLocation' , setAddress);
               }}
               icon="map-marker"
             />
