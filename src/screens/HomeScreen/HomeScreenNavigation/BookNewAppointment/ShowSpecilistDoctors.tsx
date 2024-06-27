@@ -1,6 +1,6 @@
 import {StyleSheet, View, FlatList, ScrollView, Pressable} from 'react-native';
 import {Divider, Text} from 'react-native-paper';
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {Appbar, IconButton, TextInput} from 'react-native-paper';
 import MenuBarIcon from '../../../../../assets/menuBarIcon.svg';
 import SearchBar from '../../../../components/SearchBar';
@@ -9,8 +9,22 @@ import Spacer from '../../../../components/Spacer';
 import ButtonPrimary from '../../../../components/ButtonPrimary';
 import data from './data.json';
 import DoctorInformationCard from '../../../../components/DoctorInformationCard';
+import firestore from '@react-native-firebase/firestore';
+import {useDispatch, useSelector} from 'react-redux';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {fetchDoctors} from '../../../../redux/reducers/doctorReducer';
+import {useFocusEffect} from '@react-navigation/native';
 
 const ShowSpecilistDoctors = ({navigation}: any) => {
+  const doctors = useSelector((state: any) => state.doctors);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  console.log(doctors);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchDoctors());
+    }, []),
+  );
+
   return (
     <FlatList
       ListHeaderComponent={
@@ -67,24 +81,23 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
           <Spacer height={8} />
         </>
       }
-      data={data}
+      data={doctors}
       renderItem={({item}) => (
         <>
           <Pressable
             style={styles.doctorItem}
-            onPress={() => navigation.navigate('DoctorDetail')}>
+            onPress={() => navigation.navigate('DoctorDetail', item.uid)}>
             <DoctorInformationCard
-              title={item.title}
-              location={item.location}
-              occopation={item.occupation}
-              ratingCount={item.ratingCount}
+              title={item?.fullName}
+              location={item?.address}
+              occopation={item?.specialties}
+              ratingCount={item?.ratingCount}
             />
             <IconButton icon={'dots-vertical'} onPress={() => {}} />
           </Pressable>
           <Divider bold horizontalInset />
         </>
       )}
-      keyExtractor={(item: any) => item.id}
     />
   );
 };

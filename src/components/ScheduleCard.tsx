@@ -3,12 +3,16 @@ import {View, TouchableOpacity, StyleSheet} from 'react-native';
 import {Text} from 'react-native-paper';
 import ButtonPrimary from './ButtonPrimary';
 import {Dimensions} from 'react-native';
+import {NavigationAction} from '@react-navigation/native';
 interface ScheduleProps {
   date: string;
   times: any[];
+  slots: number;
+  navigation: NavigationAction;
 }
 
-const ScheduleComponent = ({date, times}: ScheduleProps) => {
+const ScheduleComponent = ({date, times, slots, navigation , ...props}: any) => {
+  const [selectedTime, setSelectedTime] = React.useState(null);
   return (
     <View style={styles.cardContainer}>
       <View style={styles.dateContainer}>
@@ -16,7 +20,9 @@ const ScheduleComponent = ({date, times}: ScheduleProps) => {
           <Text style={styles.dateText} variant="bodyLarge">
             {date}
           </Text>
-          <Text style={styles.dateText}>3 Slots Available</Text>
+          <Text style={styles.dateText}>
+            {slots} slot{slots >= 2 && 's'} Available
+          </Text>
         </View>
 
         <ButtonPrimary style={styles.seeAllButton}>
@@ -25,10 +31,28 @@ const ScheduleComponent = ({date, times}: ScheduleProps) => {
       </View>
       <View style={styles.slotContainer}>
         {times.map(
-          item =>
+          (item : any) =>
             item && (
-              <TouchableOpacity style={styles.slotButton}>
-                <Text style={styles.slotText}>{item}</Text>
+              <TouchableOpacity
+                style={[
+                  styles.slotButton,
+                  selectedTime == item && {backgroundColor: '#225B6E'},
+                ]}
+                onPress={() => {
+                  // if (selectedTime == item) {
+                  //   setSelectedTime(null);
+                  // } else {
+                  //   setSelectedTime(item);
+                  // }
+                  navigation.navigate('ConfirmAppointment' , {time: item.time, date: date , doctorID : props.extra});
+                }}>
+                <Text
+                  style={[
+                    styles.slotText,
+                    selectedTime == item && {color: '#fff'},
+                  ]}>
+                  {item.time} {selectedTime == item}
+                </Text>
               </TouchableOpacity>
             ),
         )}

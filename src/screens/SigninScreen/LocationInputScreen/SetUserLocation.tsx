@@ -7,7 +7,7 @@ import auth from '@react-native-firebase/auth';
 import SearchBar from '../../../components/SearchBar';
 import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
-import { updateUser } from '../../../redux/reducers/userReducer';
+import {updateUser} from '../../../redux/reducers/userReducer';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 
@@ -27,18 +27,22 @@ const SetUserLocation = ({route, navigation}: any) => {
       );
       const locationObj = await res.json();
       const address = locationObj.results[0].formatted_address;
-      await firestore().collection('users').doc(user?.uid).update({
-        user: user?.uid,
+      setAddress(address);
+      const userData = {
+        isFirstTime: 'no',
         location: {
           longitude,
           latitude,
         },
-      });
-      setAddress(address);
-      const userData = { isFirstTime: 'no'};
+      };
       const userID = user?.uid;
-      dispatch(updateUser({userData , userID}))
-      navigation.goBack()
+      dispatch(
+        updateUser({
+          userData,
+          userID,
+        }),
+      );
+      navigation.goBack();
     } catch (e) {
       console.log(e);
     }
@@ -149,4 +153,3 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-

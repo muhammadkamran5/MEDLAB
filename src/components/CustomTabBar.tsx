@@ -4,7 +4,6 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 const CustomTabBar = ({ navigationState, jumpTo, tabs }: any) => {
   return (
     <View style={styles.tabBarContainer}>
-      {console.log(navigationState)}
       {tabs.map((tab : any, index : any) => (
         <View key={tab.key} style={styles.tabContainer}>
           <TouchableOpacity onPress={() => jumpTo(tab.key)}>

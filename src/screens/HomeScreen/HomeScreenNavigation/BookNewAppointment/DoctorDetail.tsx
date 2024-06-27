@@ -1,6 +1,12 @@
-import {FlatList, StyleSheet, View, useWindowDimensions} from 'react-native';
+import {
+  FlatList,
+  Pressable,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import {Appbar, Text} from 'react-native-paper';
-import React from 'react';
+import React, {useEffect} from 'react';
 import BackIcon from '../.../../../../../../assets/Back.svg';
 import DoctorInformationCard from '../../../../components/DoctorInformationCard';
 import Spacer from '../../../../components/Spacer';
@@ -8,8 +14,20 @@ import ScheduleComponent from '../../../../components/ScheduleCard';
 import slotsData from './slotsData.json';
 import ButtonPrimary from '../../../../components/ButtonPrimary';
 import DoctorDetailTabBar from './DoctorDetailTabBar';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {useDispatch, useSelector} from 'react-redux';
+import {fetchDoctorByID} from '../../../../redux/reducers/doctorReducer';
 
-const ConfirmBookAppointment = ({navigation}: any) => {
+const ConfirmBookAppointment = ({route, navigation}: any) => {
+  const id = route.params;
+  const doctor = useSelector((state: any) => state.doctors);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  console.log(doctor?.availability && doctor?.availability[0]);
+
+  useEffect(() => {
+    dispatch(fetchDoctorByID(id));
+  }, []);
+
   return (
     <>
       <Appbar.Header>
@@ -20,18 +38,24 @@ const ConfirmBookAppointment = ({navigation}: any) => {
       </Appbar.Header>
       <View style={styles.doctorDetail}>
         <DoctorInformationCard
-          title="Dr. Abeera Mansoor"
-          occopation="Nephrologist"
-          location="DHMC - 7 km"
+          title={doctor?.fullName}
+          occopation={doctor?.specialties}
+          location={doctor?.address}
           ratingCount={20}
         />
         <Spacer height={7} />
         <FlatList
           horizontal
-          data={slotsData}
+          data={doctor?.availability && doctor?.availability[0]?.dates}
           showsHorizontalScrollIndicator={false}
           renderItem={({item}) => (
-            <ScheduleComponent date={item.date} times={item.times} />
+            <ScheduleComponent
+              date={item.date}
+              times={item.time_slots}
+              slots={item.time_slots.length}
+              navigation={navigation}
+              extra = {doctor.uid}
+            />
           )}
         />
 

@@ -1,19 +1,35 @@
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
   Pressable,
   ScrollView,
   StyleSheet,
+  ToastAndroid,
   View,
 } from 'react-native';
-import React from 'react';
 import BackIcon from '../../../../../assets/Back.svg';
-import {Appbar, Divider, Icon, IconButton, Text} from 'react-native-paper';
+import {Appbar, Divider, IconButton, Text} from 'react-native-paper';
 import Spacer from '../../../../components/Spacer';
 import KInput from '../../../../components/KInput';
 import ButtonPrimary from '../../../../components/ButtonPrimary';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import {Calendar} from 'react-native-calendars';
 
-const ConfirmAppointment = ({navigation}: any) => {
+const ConfirmAppointment = ({route, navigation}: any) => {
+  const {time, date, doctorID} = route.params;
+  const currentUser = auth().currentUser;
+  const [note, setNote] = useState('');
+  const [showCalendar, setShowCalendar] = useState(false); // State to toggle calendar visibility
+  const [selectedDate, setSelectedDate] = useState(date); // State to store selected date
+  console.log(selectedDate);
+  useEffect(() => {
+    // const date = new Date(selectedDate);
+    // setSelectedDate(date.toISOString().split('T')[0])
+    console.log(selectedDate);
+  }, []);
+
   const data = [
     {
       image: require('./Card1.png'),
@@ -22,6 +38,27 @@ const ConfirmAppointment = ({navigation}: any) => {
       image: require('./Card2.png'),
     },
   ];
+
+  const toggleCalendar = () => {
+    setShowCalendar(!showCalendar);
+  };
+
+  const handlePayment = async () => {
+    try {
+      await firestore().collection('appointments').add({
+        doctor_id: doctorID,
+        note: note,
+        patient_id: currentUser?.uid,
+        status: 'Confirmed',
+        time: time,
+        date: date, // Assuming date is a variable containing the date value
+      });
+      ToastAndroid.show('Appointment added successfully', ToastAndroid.SHORT);
+    } catch (error) {
+      console.error('Error adding appointment: ', error);
+    }
+  };
+
   return (
     <ScrollView>
       <Appbar.Header>
@@ -37,9 +74,23 @@ const ConfirmAppointment = ({navigation}: any) => {
 
         <Spacer height={7} />
 
-        <View style={styles.dateCard}>
-          <Text variant="displaySmall">Thu, 09 Apr</Text>
-        </View>
+        <Pressable style={styles.dateCard} onPress={toggleCalendar}>
+          <Text variant="displaySmall">
+            {date} {time}
+          </Text>
+        </Pressable>
+        {showCalendar && (
+          <Calendar
+            current={selectedDate}
+            markedDates={{
+              '2024-07-10': {
+                selected: true,
+                selectedColor: 'blue',
+              }
+            }}
+          />
+        )}
+
         <Spacer height={7} />
 
         <View style={styles.locationContainer}>
@@ -51,7 +102,7 @@ const ConfirmAppointment = ({navigation}: any) => {
         <Divider />
 
         <Spacer height={10} />
-        <KInput placeholder="Message" />
+        <KInput placeholder="Message" value={note} onChangeText={setNote} />
         <Spacer height={7} />
         <KInput placeholder="Reason of the Visit" />
         <Spacer height={7} />
@@ -82,9 +133,7 @@ const ConfirmAppointment = ({navigation}: any) => {
         </Pressable>
         <Spacer height={7} />
 
-        <ButtonPrimary
-          style={styles.payButton}
-          onPress={() => navigation.navigate('AppointmentConfirmAlert')}>
+        <ButtonPrimary style={styles.payButton} onPress={handlePayment}>
           Pay now
         </ButtonPrimary>
       </View>
