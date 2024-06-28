@@ -62,7 +62,7 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
         <Spacer height={7} />
         <ButtonPrimary
           style={{alignSelf: 'center'}}
-          onPress={() => navigation.navigate('ConfirmAppointment')}>
+          onPress={() => navigation.navigate('ConfirmAppointment' , {time: '', date: '' , doctorID : doctor.uid})}>
           Book Appointment
         </ButtonPrimary>
 

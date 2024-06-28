@@ -7,40 +7,103 @@ import {
   StyleSheet,
   ToastAndroid,
   View,
+  Modal,
 } from 'react-native';
 import BackIcon from '../../../../../assets/Back.svg';
-import {Appbar, Divider, IconButton, Text} from 'react-native-paper';
+import {Appbar, IconButton, Text, Button, Divider} from 'react-native-paper';
 import Spacer from '../../../../components/Spacer';
 import KInput from '../../../../components/KInput';
 import ButtonPrimary from '../../../../components/ButtonPrimary';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {Calendar} from 'react-native-calendars';
+import DropDownPicker from 'react-native-dropdown-picker';
+import {useDispatch, useSelector} from 'react-redux';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {updateUser} from '../../../../redux/reducers/userReducer';
+
+const updateAppointmentStatusData = (userData: any, date: any, time: any) => {
+  // Make a copy of the availability array to avoid mutating the original userData
+  const updatedAvailability = [...userData.availability];
+
+  // Update the first item in the availability array
+  if (updatedAvailability.length > 0) {
+    updatedAvailability[0].dates = updatedAvailability[0].dates.map((item: any) => {
+      if (item && item.date === date && item.time_slots) {
+        return {
+          ...item,
+          time_slots: item.time_slots.map((slot: any) => {
+            if (slot.time === time) {
+              return {...slot, status: 'Confirmed'};
+            }
+            return slot;
+          }),
+        };
+      }
+      return item;
+    });
+  }
+
+  // Return the updated availability array
+  return updatedAvailability;
+};
+
+
+const getTimes = (date: any, dates: any) => {
+  console.log(dates);
+  const times = dates.find((item: any) => item.date === date);
+  // return times
+  return times?.time_slots?.map((item: any) => item?.time);
+};
 
 const ConfirmAppointment = ({route, navigation}: any) => {
   const {time, date, doctorID} = route.params;
+  const doctor = useSelector((state: any) => state.doctors);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+
   const currentUser = auth().currentUser;
   const [note, setNote] = useState('');
-  const [showCalendar, setShowCalendar] = useState(false); // State to toggle calendar visibility
-  const [selectedDate, setSelectedDate] = useState(date); // State to store selected date
-  console.log(selectedDate);
+  const [selectedDate, setSelectedDate] = useState(date);
+  const [selectedTime, setSelectedTime] = useState(time);
+  const [selectedDateOption, setSelectedDateOption] = useState(null);
+  const [selectedTimeOption, setSelectedTimeOption] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isOpenDate, setIsOpenDate] = useState(false);
+  const [isOpenTime, setIsOpenTime] = useState(false);
+  const times = getTimes(date, doctor.availability[0].dates);
+
+  const [timeOptions, setTimeOptions] = useState(
+    times ? times.map((item: any) => ({label: item, value: item})) : [],
+  );
+  const [dateOptions, setDateOptions] = useState(
+    doctor.availability[0].dates.map((item: any) => ({
+      label: item.date,
+      value: item.date,
+    })),
+  );
+
   useEffect(() => {
-    // const date = new Date(selectedDate);
-    // setSelectedDate(date.toISOString().split('T')[0])
-    console.log(selectedDate);
-  }, []);
+    console.log(dateOptions);
+    const times = getTimes(selectedDateOption, doctor.availability[0].dates);
+    times &&
+      setTimeOptions(times.map((item: any) => ({label: item, value: item})));
+    console.log(timeOptions);
+  }, [selectedDateOption]);
 
-  const data = [
-    {
-      image: require('./Card1.png'),
-    },
-    {
-      image: require('./Card2.png'),
-    },
-  ];
+  const handleApply = () => {
+    // Handle applying the selected date and time
+    setSelectedDate(selectedDateOption);
+    setSelectedTime(selectedTimeOption);
+    // Handle selectedTimeOption as needed
+    setIsModalVisible(false); // Close the modal after applying
+  };
 
-  const toggleCalendar = () => {
-    setShowCalendar(!showCalendar);
+  const handleCancel = () => {
+    // Handle canceling selection
+    setIsModalVisible(false); // Close the modal
+  };
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
   };
 
   const handlePayment = async () => {
@@ -50,10 +113,20 @@ const ConfirmAppointment = ({route, navigation}: any) => {
         note: note,
         patient_id: currentUser?.uid,
         status: 'Confirmed',
-        time: time,
-        date: date, // Assuming date is a variable containing the date value
+        time: selectedTime,
+        date: selectedDate,
       });
+      const userData = (
+        await firestore().collection('users').doc(doctor.uid).get()
+      ).data();
+      console.log(userData);
+      console.log(
+        updateAppointmentStatusData(userData, selectedDate, selectedTime),
+      );
+      const updateData = {availability: updateAppointmentStatusData(userData, selectedDate, selectedTime)};
+      dispatch(updateUser({userData : updateData , userID : doctor.uid}));
       ToastAndroid.show('Appointment added successfully', ToastAndroid.SHORT);
+      navigation.navigate('AppointmentConfirmAlert');
     } catch (error) {
       console.error('Error adding appointment: ', error);
     }
@@ -74,22 +147,11 @@ const ConfirmAppointment = ({route, navigation}: any) => {
 
         <Spacer height={7} />
 
-        <Pressable style={styles.dateCard} onPress={toggleCalendar}>
+        <Pressable style={styles.dateCard} onPress={toggleModal}>
           <Text variant="displaySmall">
-            {date} {time}
+            {selectedDate} {selectedTime}
           </Text>
         </Pressable>
-        {showCalendar && (
-          <Calendar
-            current={selectedDate}
-            markedDates={{
-              '2024-07-10': {
-                selected: true,
-                selectedColor: 'blue',
-              }
-            }}
-          />
-        )}
 
         <Spacer height={7} />
 
@@ -114,7 +176,10 @@ const ConfirmAppointment = ({route, navigation}: any) => {
         <Spacer height={7} />
         <FlatList
           horizontal
-          data={data}
+          data={[
+            {image: require('./Card1.png')},
+            {image: require('./Card2.png')},
+          ]}
           renderItem={({item}) => (
             <View>
               <Image
@@ -128,6 +193,7 @@ const ConfirmAppointment = ({route, navigation}: any) => {
           )}
           showsHorizontalScrollIndicator={false}
         />
+
         <Pressable>
           <Text variant="bodyLarge">Manage Cards {'>'}</Text>
         </Pressable>
@@ -136,6 +202,42 @@ const ConfirmAppointment = ({route, navigation}: any) => {
         <ButtonPrimary style={styles.payButton} onPress={handlePayment}>
           Pay now
         </ButtonPrimary>
+
+        {/* Modal for selecting date and time */}
+        <Modal visible={isModalVisible} animationType="slide">
+          <View style={styles.modalContent}>
+            <Text>Select Date and Time</Text>
+            <View style={{flex: 0.5, justifyContent: 'space-around'}}>
+              <DropDownPicker
+                items={dateOptions}
+                containerStyle={{height: 40}}
+                style={{backgroundColor: '#fafafa'}}
+                setItems={setDateOptions}
+                value={selectedDateOption}
+                setValue={setSelectedDateOption}
+                open={isOpenDate}
+                setOpen={setIsOpenDate}
+              />
+
+              <DropDownPicker
+                items={timeOptions}
+                containerStyle={{height: 40}}
+                style={{backgroundColor: '#fafafa'}}
+                setItems={setTimeOptions}
+                value={selectedTimeOption}
+                setValue={setSelectedTimeOption}
+                open={isOpenTime}
+                setOpen={setIsOpenTime}
+              />
+            </View>
+            <View style={styles.modalButtons}>
+              <Button mode="contained" onPress={handleApply}>
+                Apply
+              </Button>
+              <Button onPress={handleCancel}>Cancel</Button>
+            </View>
+          </View>
+        </Modal>
       </View>
     </ScrollView>
   );
@@ -158,7 +260,6 @@ const styles = StyleSheet.create({
   },
   locationContainer: {
     flexDirection: 'row',
-    // justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 10,
   },
@@ -166,5 +267,16 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '50%',
     marginBottom: 20,
+  },
+  modalContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginHorizontal: 20,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 20,
   },
 });

@@ -39,11 +39,6 @@ const ScheduleComponent = ({date, times, slots, navigation , ...props}: any) => 
                   selectedTime == item && {backgroundColor: '#225B6E'},
                 ]}
                 onPress={() => {
-                  // if (selectedTime == item) {
-                  //   setSelectedTime(null);
-                  // } else {
-                  //   setSelectedTime(item);
-                  // }
                   navigation.navigate('ConfirmAppointment' , {time: item.time, date: date , doctorID : props.extra});
                 }}>
                 <Text
