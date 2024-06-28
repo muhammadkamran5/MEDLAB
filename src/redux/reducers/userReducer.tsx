@@ -89,8 +89,6 @@ export const updateUser = createAsyncThunk(
     {
       const {userData , userID} = data;
       try {
-        console.log(userData)
-        console.log("id",userID)
         const userRef = firestore().collection('users').doc(userID);
         await userRef.update(userData);
         return (await firestore().collection('users').doc(userID).get()).data();

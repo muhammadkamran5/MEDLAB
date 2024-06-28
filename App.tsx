@@ -17,6 +17,7 @@ import auth from '@react-native-firebase/auth';
 import {useDispatch} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {fetchCurrentUser} from './src/redux/reducers/userReducer';
+import GiveFeedBack from './src/screens/GiveFeedBack/GiveFeedBack';
 
 const Stack = createNativeStackNavigator();
 function App(): React.JSX.Element {
@@ -61,6 +62,11 @@ function App(): React.JSX.Element {
             <Stack.Screen
               name="AppointmentConfirmAlert"
               component={AppointmentConfirmAlert}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="GiveFeedBack"
+              component={GiveFeedBack}
               options={{headerShown: false}}
             />
           </>

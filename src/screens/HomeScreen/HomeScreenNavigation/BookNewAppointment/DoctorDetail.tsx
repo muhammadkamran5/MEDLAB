@@ -5,7 +5,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import {Appbar, Text} from 'react-native-paper';
+import {Appbar, Button, Text} from 'react-native-paper';
 import React, {useEffect} from 'react';
 import BackIcon from '../.../../../../../../assets/Back.svg';
 import DoctorInformationCard from '../../../../components/DoctorInformationCard';
@@ -44,6 +44,10 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
           ratingCount={20}
         />
         <Spacer height={7} />
+        <Button onPress={() => navigation.navigate('GiveFeedBack')} style={{alignSelf: 'flex-start'}} textColor='#225B6E'>
+          Give FeedBack
+        </Button>
+        <Spacer height={7} />
         <FlatList
           horizontal
           data={doctor?.availability && doctor?.availability[0]?.dates}
@@ -54,7 +58,7 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
               times={item.time_slots}
               slots={item.time_slots.length}
               navigation={navigation}
-              extra = {doctor.uid}
+              extra={doctor.uid}
             />
           )}
         />
@@ -62,7 +66,13 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
         <Spacer height={7} />
         <ButtonPrimary
           style={{alignSelf: 'center'}}
-          onPress={() => navigation.navigate('ConfirmAppointment' , {time: '', date: '' , doctorID : doctor.uid})}>
+          onPress={() =>
+            navigation.navigate('ConfirmAppointment', {
+              time: '',
+              date: '',
+              doctorID: doctor.uid,
+            })
+          }>
           Book Appointment
         </ButtonPrimary>
 

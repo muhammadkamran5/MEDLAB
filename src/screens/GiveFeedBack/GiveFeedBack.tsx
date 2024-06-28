@@ -7,10 +7,33 @@ import Spacer from '../../components/Spacer';
 import KInput from '../../components/KInput';
 import ButtonPrimary from '../../components/ButtonPrimary';
 import StarRating from 'react-native-star-rating-widget';
+import auth from '@react-native-firebase/auth';
+import {useDispatch, useSelector} from 'react-redux';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {updateUser} from '../../redux/reducers/userReducer';
 
 const GiveFeedBack = ({navigation}: any) => {
   const [feedbackText, setFeedbackText] = React.useState('');
+  const doctor = useSelector((state: any) => state.doctors);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const currentUser = auth().currentUser;
   const [rating, setRating] = React.useState(0);
+
+  const addFeedback = () => {
+    const userID = doctor.uid;
+    const userData = {
+      feedbacks: [
+        ...(doctor?.feedbacks ? doctor.feedbacks : []),
+        {
+          feedbackText,
+          rating,
+          patientID: currentUser?.uid,
+        },
+      ],
+    };
+    dispatch(updateUser({userID, userData}));
+  };
+
   return (
     <ScrollView>
       <Appbar>
@@ -28,9 +51,9 @@ const GiveFeedBack = ({navigation}: any) => {
 
         <Spacer height={20} />
         <DoctorInformationCard
-          title="Dr. Abeera Mansoor"
-          occopation="Nephrologist"
-          location="DHMC - 7 km"
+          title={doctor.fullName}
+          occopation={doctor.specialties}
+          location={doctor.address}
           ratingCount={10}
         />
         <Spacer height={7} />
@@ -60,7 +83,7 @@ const GiveFeedBack = ({navigation}: any) => {
         />
       </View>
       <View style={{marginTop: 20, alignItems: 'center'}}>
-        <ButtonPrimary>Add feedback</ButtonPrimary>
+        <ButtonPrimary onPress={addFeedback}>Add feedback</ButtonPrimary>
       </View>
     </ScrollView>
   );

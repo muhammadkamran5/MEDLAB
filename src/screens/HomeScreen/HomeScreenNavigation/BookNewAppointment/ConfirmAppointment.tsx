@@ -8,6 +8,7 @@ import {
   ToastAndroid,
   View,
   Modal,
+  KeyboardAvoidingView,
 } from 'react-native';
 import BackIcon from '../../../../../assets/Back.svg';
 import {Appbar, IconButton, Text, Button, Divider} from 'react-native-paper';
@@ -20,6 +21,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {updateUser} from '../../../../redux/reducers/userReducer';
+import { LogBox } from 'react-native';
 
 const updateAppointmentStatusData = (userData: any, date: any, time: any) => {
   // Make a copy of the availability array to avoid mutating the original userData
@@ -27,26 +29,27 @@ const updateAppointmentStatusData = (userData: any, date: any, time: any) => {
 
   // Update the first item in the availability array
   if (updatedAvailability.length > 0) {
-    updatedAvailability[0].dates = updatedAvailability[0].dates.map((item: any) => {
-      if (item && item.date === date && item.time_slots) {
-        return {
-          ...item,
-          time_slots: item.time_slots.map((slot: any) => {
-            if (slot.time === time) {
-              return {...slot, status: 'Confirmed'};
-            }
-            return slot;
-          }),
-        };
-      }
-      return item;
-    });
+    updatedAvailability[0].dates = updatedAvailability[0].dates.map(
+      (item: any) => {
+        if (item && item.date === date && item.time_slots) {
+          return {
+            ...item,
+            time_slots: item.time_slots.map((slot: any) => {
+              if (slot.time === time) {
+                return {...slot, status: 'Confirmed'};
+              }
+              return slot;
+            }),
+          };
+        }
+        return item;
+      },
+    );
   }
 
   // Return the updated availability array
   return updatedAvailability;
 };
-
 
 const getTimes = (date: any, dates: any) => {
   console.log(dates);
@@ -80,7 +83,9 @@ const ConfirmAppointment = ({route, navigation}: any) => {
       value: item.date,
     })),
   );
-
+useEffect(()=>{
+  LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+}, [])
   useEffect(() => {
     console.log(dateOptions);
     const times = getTimes(selectedDateOption, doctor.availability[0].dates);
@@ -123,8 +128,14 @@ const ConfirmAppointment = ({route, navigation}: any) => {
       console.log(
         updateAppointmentStatusData(userData, selectedDate, selectedTime),
       );
-      const updateData = {availability: updateAppointmentStatusData(userData, selectedDate, selectedTime)};
-      dispatch(updateUser({userData : updateData , userID : doctor.uid}));
+      const updateData = {
+        availability: updateAppointmentStatusData(
+          userData,
+          selectedDate,
+          selectedTime,
+        ),
+      };
+      dispatch(updateUser({userData: updateData, userID: doctor.uid}));
       ToastAndroid.show('Appointment added successfully', ToastAndroid.SHORT);
       navigation.navigate('AppointmentConfirmAlert');
     } catch (error) {
@@ -142,7 +153,7 @@ const ConfirmAppointment = ({route, navigation}: any) => {
       </Appbar.Header>
       <View style={styles.container}>
         <Text variant="bodyLarge" style={styles.headingText}>
-          Dr. Abeera Mansoor Confirmation
+          {doctor?.fullName}
         </Text>
 
         <Spacer height={7} />
@@ -154,10 +165,43 @@ const ConfirmAppointment = ({route, navigation}: any) => {
         </Pressable>
 
         <Spacer height={7} />
+        <View style={{flex: 0.5, flexDirection: 'row', gap: 10}}>
+          <View style={{width: '50%'}}>
+            <DropDownPicker
+              items={dateOptions}
+              containerStyle={{height: 40}}
+              style={{backgroundColor: '#fafafa'}}
+              setItems={setDateOptions}
+              value={selectedDateOption}
+              setValue={(value : any)=> {
+                setSelectedDateOption(value)
+                setSelectedDate(value)
+              }}
+              open={isOpenDate}
+              setOpen={setIsOpenDate}
+            />
+          </View>
 
+          <View style={{width: '50%'}}>
+            <DropDownPicker
+              items={timeOptions}
+              containerStyle={{height: 40}}
+              style={{backgroundColor: '#fafafa'}}
+              setItems={setTimeOptions}
+              value={selectedTimeOption}
+              setValue={(value : any)=> {
+                setSelectedTimeOption(value)
+                setSelectedTime(value)
+              }}
+              open={isOpenTime}
+              setOpen={setIsOpenTime}
+            />
+          </View>
+        </View>
+        <Spacer height={10} />
         <View style={styles.locationContainer}>
           <IconButton icon={'map-marker'} />
-          <Text>DHMC, Lahore - 7 km</Text>
+          <Text>{doctor?.address}</Text>
         </View>
 
         <Spacer height={5} />
@@ -202,42 +246,7 @@ const ConfirmAppointment = ({route, navigation}: any) => {
         <ButtonPrimary style={styles.payButton} onPress={handlePayment}>
           Pay now
         </ButtonPrimary>
-
-        {/* Modal for selecting date and time */}
-        <Modal visible={isModalVisible} animationType="slide">
-          <View style={styles.modalContent}>
-            <Text>Select Date and Time</Text>
-            <View style={{flex: 0.5, justifyContent: 'space-around'}}>
-              <DropDownPicker
-                items={dateOptions}
-                containerStyle={{height: 40}}
-                style={{backgroundColor: '#fafafa'}}
-                setItems={setDateOptions}
-                value={selectedDateOption}
-                setValue={setSelectedDateOption}
-                open={isOpenDate}
-                setOpen={setIsOpenDate}
-              />
-
-              <DropDownPicker
-                items={timeOptions}
-                containerStyle={{height: 40}}
-                style={{backgroundColor: '#fafafa'}}
-                setItems={setTimeOptions}
-                value={selectedTimeOption}
-                setValue={setSelectedTimeOption}
-                open={isOpenTime}
-                setOpen={setIsOpenTime}
-              />
-            </View>
-            <View style={styles.modalButtons}>
-              <Button mode="contained" onPress={handleApply}>
-                Apply
-              </Button>
-              <Button onPress={handleCancel}>Cancel</Button>
-            </View>
-          </View>
-        </Modal>
+       
       </View>
     </ScrollView>
   );
