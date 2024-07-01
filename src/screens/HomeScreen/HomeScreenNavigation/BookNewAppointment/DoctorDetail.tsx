@@ -1,6 +1,7 @@
 import {
   FlatList,
   Pressable,
+  ScrollView,
   StyleSheet,
   View,
   useWindowDimensions,
@@ -29,7 +30,7 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
   }, []);
 
   return (
-    <>
+    <ScrollView>
       <Appbar.Header>
         <Appbar.Action
           icon={() => <BackIcon />}
@@ -79,7 +80,7 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
         <Spacer height={7} />
       </View>
       <DoctorDetailTabBar />
-    </>
+    </ScrollView>
   );
 };
 

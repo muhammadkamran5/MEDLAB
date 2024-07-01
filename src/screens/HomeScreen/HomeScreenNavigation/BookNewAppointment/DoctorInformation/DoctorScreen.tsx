@@ -1,20 +1,56 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import React from 'react';
+import {Text} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import {List} from 'react-native-paper';
+import Spacer from '../../../../../components/Spacer';
+import Ellipse from '../../../../../../assets/Ellipse.svg';
 
 const DoctorScreen = () => {
   const doctor = useSelector((state: any) => state.doctors);
-  console.log(doctor.info);
   return (
     <View style={styles.container}>
-      {doctor?.info &&
-        doctor?.info.map((item: any, index: number) => {
+      <Text variant="headlineSmall">Education</Text>
+      <Spacer height={4} />
+      {doctor?.info?.Education &&
+        doctor.info.Education.map((education: any) => {
           return (
-            <List.Item
-              title={item}
-              left={() => <List.Icon icon="circle-outline" />}
-            />
+            <>
+              <View style={{flexDirection: 'row' , gap : 5}}>
+                <Ellipse style={{marginTop : 5}}/>
+                <Text variant="bodySmall">{education}</Text>
+              </View>
+              <Spacer height={3} />
+            </>
+          );
+        })}
+      <Text variant="headlineSmall">Publications</Text>
+      <Spacer height={4} />
+      {doctor?.info?.Publications &&
+        doctor.info.Publications.map((education: any) => {
+          return (
+            <>
+              <View style={{flexDirection: 'row' , gap : 5}}>
+                <Ellipse style={{marginTop : 5}}/>
+                <Text variant="bodySmall">{education}</Text>
+              </View>
+              <Spacer height={3} />
+            </>
+          );
+        })}
+      <Text variant="headlineSmall">Description</Text>
+      <Spacer height={4} />
+      {doctor?.info?.Description &&
+        doctor.info.Description.map((education: any) => {
+          return (
+            <>
+              <View style={{flexDirection: 'row' , gap : 5 , marginVertical : 5}}>
+                <Ellipse style={{marginTop : 5}}/>
+                <Text variant="bodySmall">{education}</Text>
+              </View>
+
+              <Spacer height={3} />
+            </>
           );
         })}
     </View>
