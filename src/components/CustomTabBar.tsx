@@ -1,13 +1,18 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {colors} from '../../themes/theme';
 
-const CustomTabBar = ({ navigationState, jumpTo, tabs }: any) => {
+const CustomTabBar = ({navigationState, jumpTo, tabs}: any) => {
   return (
     <View style={styles.tabBarContainer}>
-      {tabs.map((tab : any, index : any) => (
+      {tabs.map((tab: any, index: any) => (
         <View key={tab.key} style={styles.tabContainer}>
           <TouchableOpacity onPress={() => jumpTo(tab.key)}>
-            <Text style={[styles.tabText, navigationState.index === index && styles.activeTabText]}>
+            <Text
+              style={[
+                styles.tabText,
+                navigationState.index === index && styles.activeTabText,
+              ]}>
               {tab.title}
             </Text>
           </TouchableOpacity>
@@ -35,11 +40,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   activeTabText: {
-    color: '#225B6E',
+    color: colors.PRIMARY,
   },
   activeIndicator: {
     height: 2,
-    backgroundColor: '#225B6E',
+    backgroundColor: colors.PRIMARY,
     marginTop: 3,
     width: '80%',
   },

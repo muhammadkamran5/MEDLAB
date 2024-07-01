@@ -1,16 +1,20 @@
 import {ScrollView, StyleSheet, View} from 'react-native';
 import {Appbar, Divider, Text, TextInput} from 'react-native-paper';
 import React, {useState} from 'react';
-import BackIcon from '../../../assets/Back.svg';
-import DoctorInformationCard from '../../components/DoctorInformationCard';
-import Spacer from '../../components/Spacer';
-import KInput from '../../components/KInput';
-import ButtonPrimary from '../../components/ButtonPrimary';
 import StarRating from 'react-native-star-rating-widget';
 import auth from '@react-native-firebase/auth';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
+
+import DoctorInformationCard from '../../components/DoctorInformationCard';
+import Spacer from '../../components/Spacer';
+import KInput from '../../components/KInput';
+import ButtonPrimary from '../../components/ButtonPrimary';
 import {updateUser} from '../../redux/reducers/userReducer';
+import BackIcon from '../../../assets/Back.svg';
+
+const getCurrentDate = () =>
+  new Date().toJSON().slice(0, 10).replace(/-/g, '/');
 
 const GiveFeedBack = ({navigation}: any) => {
   const [feedbackText, setFeedbackText] = React.useState('');
@@ -28,6 +32,7 @@ const GiveFeedBack = ({navigation}: any) => {
           feedbackText,
           rating,
           patientID: currentUser?.uid,
+          feedbackDate: getCurrentDate(),
         },
       ],
     };

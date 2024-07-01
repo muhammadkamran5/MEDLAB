@@ -7,7 +7,6 @@ import SearchBar from '../../../../components/SearchBar';
 import KInput from '../../../../components/KInput';
 import Spacer from '../../../../components/Spacer';
 import ButtonPrimary from '../../../../components/ButtonPrimary';
-import data from './data.json';
 import DoctorInformationCard from '../../../../components/DoctorInformationCard';
 import firestore from '@react-native-firebase/firestore';
 import {useDispatch, useSelector} from 'react-redux';
@@ -18,12 +17,26 @@ import {useFocusEffect} from '@react-navigation/native';
 const ShowSpecilistDoctors = ({navigation}: any) => {
   const doctors = useSelector((state: any) => state.doctors);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+
   console.log(doctors);
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchDoctors());
     }, []),
   );
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(fetchDoctors());
+    setIsRefreshing(false);
+  };
+
+  const getAverageRating = (feedbacks: any) => {
+    const feedback = feedbacks.map((feedback: any) => feedback.rating);
+    const averageRating =
+      feedback.reduce((a: number, b: number) => a + b, 0) / feedback.length;
+    return averageRating;
+  };
 
   return (
     <FlatList
@@ -82,6 +95,9 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
         </>
       }
       data={doctors}
+      refreshing={isRefreshing}
+      onRefresh={onRefresh}
+      keyExtractor={(item: any) => item.uid}
       renderItem={({item}) => (
         <>
           <Pressable
@@ -91,7 +107,8 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
               title={item?.fullName}
               location={item?.address}
               occopation={item?.specialties}
-              ratingCount={item?.ratingCount}
+              ratingCount={item?.feedbacks?.length}
+              rating={getAverageRating(item?.feedbacks)}
             />
             <IconButton icon={'dots-vertical'} onPress={() => {}} />
           </Pressable>

@@ -9,6 +9,7 @@ interface cardProps {
   occopation: string;
   location: string;
   ratingCount?: number;
+  rating ?: number
 }
 
 const DoctorInformationCard = ({
@@ -16,6 +17,7 @@ const DoctorInformationCard = ({
   occopation,
   location,
   ratingCount,
+  rating
 }: cardProps) => {
   return (
     <View style={styles.cardContainer}>
@@ -32,8 +34,8 @@ const DoctorInformationCard = ({
           {location}
         </Text>
         <View style={styles.starRating}>
-          <StarRating rating={3.5} onChange={() => {}} starSize={20} />
-          <Text>({ratingCount})</Text>
+          <StarRating rating={rating || 0} onChange={() => {}} starSize={20} />
+          <Text>{rating}/5.0({ratingCount})</Text>
         </View>
       </View>
     </View>

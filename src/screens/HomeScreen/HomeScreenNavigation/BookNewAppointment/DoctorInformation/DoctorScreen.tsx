@@ -13,12 +13,12 @@ const DoctorScreen = () => {
       <Text variant="headlineSmall">Education</Text>
       <Spacer height={4} />
       {doctor?.info?.Education &&
-        doctor.info.Education.map((education: any) => {
+        doctor.info.Education.map((education: any, index: number) => {
           return (
             <>
-              <View style={{flexDirection: 'row' , gap : 5}}>
-                <Ellipse style={{marginTop : 5}}/>
-                <Text variant="bodySmall">{education}</Text>
+              <View style={{flexDirection: 'row', gap: 5}} key={index + 10}>
+                <Ellipse style={{marginTop: 5}} />
+                <Text variant="bodyMedium">{education}</Text>
               </View>
               <Spacer height={3} />
             </>
@@ -27,12 +27,12 @@ const DoctorScreen = () => {
       <Text variant="headlineSmall">Publications</Text>
       <Spacer height={4} />
       {doctor?.info?.Publications &&
-        doctor.info.Publications.map((education: any) => {
+        doctor.info.Publications.map((education: any, index: number) => {
           return (
             <>
-              <View style={{flexDirection: 'row' , gap : 5}}>
-                <Ellipse style={{marginTop : 5}}/>
-                <Text variant="bodySmall">{education}</Text>
+              <View style={{flexDirection: 'row', gap: 5}} key={index + 5}>
+                <Ellipse style={{marginTop: 5}} />
+                <Text variant="bodyMedium">{education}</Text>
               </View>
               <Spacer height={3} />
             </>
@@ -41,12 +41,14 @@ const DoctorScreen = () => {
       <Text variant="headlineSmall">Description</Text>
       <Spacer height={4} />
       {doctor?.info?.Description &&
-        doctor.info.Description.map((education: any) => {
+        doctor.info.Description.map((education: any, index: number) => {
           return (
             <>
-              <View style={{flexDirection: 'row' , gap : 5 , marginVertical : 5}}>
-                <Ellipse style={{marginTop : 5}}/>
-                <Text variant="bodySmall">{education}</Text>
+              <View
+                style={{flexDirection: 'row', gap: 5, marginVertical: 5}}
+                key={index}>
+                <Ellipse style={{marginTop: 5}} />
+                <Text variant="bodyMedium">{education}</Text>
               </View>
 
               <Spacer height={3} />

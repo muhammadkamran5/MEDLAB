@@ -13,7 +13,7 @@ const initialState: UserState = {
 };
 export const fetchCurrentUser = createAsyncThunk(
   'user/fetchCurrentUser',
-  async (userId: string): Promise<any> => {
+  async (userId: any): Promise<any> => {
     try {
       const userDoc = await firestore().collection('users').doc(userId).get();
 
@@ -34,24 +34,20 @@ export const SignInByGoogle = createAsyncThunk(
   async (): Promise<any> => {
     {
       try {
-        // Ensure Google Play Services are available
         await GoogleSignin.hasPlayServices({
           showPlayServicesUpdateDialog: true,
         });
 
-        // Sign in with Google
         const {idToken} = await GoogleSignin.signIn();
 
-        // Create a Google credential with the token
         const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-        // Sign-in the user with the credential
         const userCredential = await auth().signInWithCredential(
           googleCredential,
         );
         const user = userCredential.user;
 
-        // Add user details to Firestore
+  
         const userDoc = await firestore()
           .collection('users')
           .doc(user.uid)

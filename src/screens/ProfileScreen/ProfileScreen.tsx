@@ -1,4 +1,10 @@
-import {Image, ScrollView, StyleSheet, View} from 'react-native';
+import {
+  Image,
+  RefreshControl,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -15,7 +21,7 @@ import ButtonSecondary from '../../components/ButtonSecondary';
 import KInput from '../../components/KInput';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
-import {updateUser} from '../../redux/reducers/userReducer';
+import {fetchCurrentUser, updateUser} from '../../redux/reducers/userReducer';
 
 const ProfileScreen = ({navigation}: any) => {
   const user = useSelector((state: any) => state.user.currentUser);
@@ -29,6 +35,13 @@ const ProfileScreen = ({navigation}: any) => {
   const [location, setLocation] = useState('');
   const [bio, setBio] = useState('');
   const [fullName, setFullName] = useState('');
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const onRefresh = () => {
+    setIsRefreshing(true);
+    dispatch(fetchCurrentUser(auth().currentUser?.uid));
+    setIsRefreshing(false);
+  };
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -110,7 +123,7 @@ const ProfileScreen = ({navigation}: any) => {
         left={
           <TextInput.Icon
             onPress={() => {
-              navigation.navigate('SelectLocation' , setLocation);
+              navigation.navigate('SelectLocation', setLocation);
             }}
             icon="map-marker"
           />
@@ -159,7 +172,11 @@ const ProfileScreen = ({navigation}: any) => {
       <Appbar.Header>
         <Appbar.BackAction onPress={() => navigation.goBack()} />
       </Appbar.Header>
-      <ScrollView style={{flex: 1}}>
+      <ScrollView
+        style={{flex: 1}}
+        refreshControl={
+          <RefreshControl refreshing={isRefreshing} onRefresh={onRefresh} />
+        }>
         {user ? (
           <>
             <View style={styles.container}>

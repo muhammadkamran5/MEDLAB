@@ -1,6 +1,7 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React, { ReactNode } from 'react';
 import {Button} from 'react-native-paper';
+import { colors } from '../../themes/theme';
 
 interface ButtonPrimaryProps {
   children: ReactNode;
@@ -18,7 +19,7 @@ const ButtonPrimary = ({
 }: any) => {
   return (
     <Button
-      buttonColor={buttonColor || '#225B6E'}
+      buttonColor={buttonColor || colors.PRIMARY}
       {...props}
       style={[{borderRadius: 5}, style]}
       textColor={textColor || '#fff'}
@@ -34,6 +35,5 @@ const styles = StyleSheet.create({
   button: {
     paddingHorizontal: 20,
     paddingVertical: 5,
-    // width : '100%',
   },
 });
