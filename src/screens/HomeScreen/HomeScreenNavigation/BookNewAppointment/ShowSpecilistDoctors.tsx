@@ -1,5 +1,5 @@
 import {StyleSheet, View, FlatList, ScrollView, Pressable} from 'react-native';
-import {Divider, Text} from 'react-native-paper';
+import {Divider, Text, Modal, Portal, Menu, Button} from 'react-native-paper';
 import React, {useCallback, useEffect} from 'react';
 import {Appbar, IconButton, TextInput} from 'react-native-paper';
 import MenuBarIcon from '../../../../../assets/menuBarIcon.svg';
@@ -11,26 +11,48 @@ import DoctorInformationCard from '../../../../components/DoctorInformationCard'
 import firestore from '@react-native-firebase/firestore';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
-import {fetchDoctors} from '../../../../redux/reducers/doctorReducer';
+import {Dimensions} from 'react-native';
+
+import {
+  fetchDoctors,
+  fetchDoctorsBySearch,
+  fetchDoctorsBySearchAndSort,
+  sortByName,
+} from '../../../../redux/reducers/doctorReducer';
 import {useFocusEffect} from '@react-navigation/native';
+import Calender from '../../../../components/Calender';
 
 const ShowSpecilistDoctors = ({navigation}: any) => {
+  const width = Dimensions.get('window').width;
   const doctors = useSelector((state: any) => state.doctors);
-  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  const [isRefreshing, setIsRefreshing] = React.useState(false);
 
-  console.log(doctors);
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const [search, setSearch] = React.useState('');
+  const [address, setAddress] = React.useState('');
+  const [isRefreshing, setIsRefreshing] = React.useState(false);
+  const [showModal, setShowModal] = React.useState(false);
+  const [date, setDate]: any = React.useState(null);
+  const [longitude, setLongitude] = React.useState(0);
+  const [latitude, setLatitude] = React.useState(0);
+  const [showTooltip, setShowTooltip] = React.useState(false);
+
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchDoctors());
     }, []),
   );
+
   const onRefresh = () => {
     setIsRefreshing(true);
     dispatch(fetchDoctors());
     setIsRefreshing(false);
   };
 
+  const handleSearch = async () => {
+    dispatch(
+      fetchDoctorsBySearch({search, address, date, latitude, longitude}),
+    );
+  };
   const getAverageRating = (feedbacks: any) => {
     const feedback = feedbacks.map((feedback: any) => feedback.rating);
     const averageRating =
@@ -52,7 +74,11 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
               <Text style={styles.title}>Book an Appointment</Text>
             </View>
           </Appbar.Header>
-          <SearchBar placeholder="Doctor, Specialist" />
+          <SearchBar
+            placeholder="Doctor, Specialist"
+            value={search}
+            onChangeText={setSearch}
+          />
 
           <Spacer height={8} />
 
@@ -63,9 +89,18 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
               <TextInput.Icon
                 icon={'map-marker'}
                 color={'#225B6E'}
-                onPress={() => navigation.navigate('SelectLocation')}
+                onPress={() =>
+                  navigation.navigate('SelectLocation', {
+                    setAddress,
+                    setLat: setLatitude,
+                    setLng: setLongitude,
+                  })
+                }
               />
             }
+            value={address}
+            // onChangeText={setAddress}
+            disabled
             placeholder={'Select Area'}
           />
 
@@ -74,24 +109,76 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
           <TextInput
             style={styles.locationInput}
             mode="flat"
-            left={<TextInput.Icon icon={'calendar'} color={'#225B6E'} />}
+            value={date ? date : ''}
+            left={
+              <TextInput.Icon
+                icon={'calendar'}
+                color={'#225B6E'}
+                onPress={() => setShowModal(true)}
+              />
+            }
             placeholder={'Select Date'}
           />
 
           <Spacer height={8} />
 
           <View style={{width: '50%', alignSelf: 'center'}}>
-            <ButtonPrimary>Search</ButtonPrimary>
+            <ButtonPrimary onPress={handleSearch}>Search</ButtonPrimary>
           </View>
 
           <Spacer height={8} />
 
           <View style={styles.specialistHeading}>
             <Text variant="titleMedium">All Specialities</Text>
-            <IconButton icon={'filter-variant'} />
+
+            <Menu
+              visible={showTooltip}
+              onDismiss={() => setShowTooltip(false)}
+              anchor={
+                <IconButton
+                  icon={'filter-variant'}
+                  onPress={() => setShowTooltip(true)}
+                />
+              }
+              contentStyle={{backgroundColor: 'white'}}>
+              <View style={{alignSelf: 'flex-start'}}>
+                <Button
+                  onPress={() =>
+                    dispatch(
+                      fetchDoctorsBySearchAndSort({
+                        search,
+                        address,
+                        date,
+                        latitude,
+                        longitude,
+                      }),
+                    )
+                  }>
+                  <Text style={{textAlign: 'left'}}>Sort By Location</Text>
+                </Button>
+                <Button contentStyle={{padding: 0}}>
+                  <Text
+                    style={{textAlign: 'left'}}
+                    onPress={() => dispatch(sortByName())}>
+                    Sort By Name
+                  </Text>
+                </Button>
+                <Button>
+                  <Text style={{textAlign: 'left'}}>Sort By Rating</Text>
+                </Button>
+              </View>
+            </Menu>
           </View>
 
           <Spacer height={8} />
+          <Portal>
+            <Modal
+              visible={showModal}
+              onDismiss={() => setShowModal(false)}
+              style={{backgroundColor: 'white'}}>
+              <Calender setDate={setDate} />
+            </Modal>
+          </Portal>
         </>
       }
       data={doctors}

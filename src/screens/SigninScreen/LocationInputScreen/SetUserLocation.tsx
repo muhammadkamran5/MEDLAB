@@ -12,7 +12,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 
 const SetUserLocation = ({route, navigation}: any) => {
-  const setAddress = route.params;
+  const {setAddress, setLat, setLng} = route.params;
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const key = 'AIzaSyBOzLbI1W6cUoolrMY6qiNtco2qisO3iKM';
   const [longitude, setLongitude] = useState(0);
@@ -28,20 +28,22 @@ const SetUserLocation = ({route, navigation}: any) => {
       const locationObj = await res.json();
       const address = locationObj.results[0].formatted_address;
       setAddress(address);
-      const userData = {
-        isFirstTime: 'no',
-        location: {
-          longitude,
-          latitude,
-        },
-      };
-      const userID = user?.uid;
-      dispatch(
-        updateUser({
-          userData,
-          userID,
-        }),
-      );
+      setLat(latitude)
+      setLng(longitude)
+      // const userData = {
+      //   isFirstTime: 'no',
+      //   location: {
+      //     longitude,
+      //     latitude,
+      //   },
+      // };
+      // const userID = user?.uid;
+      // dispatch(
+      //   updateUser({
+      //     userData,
+      //     userID,
+      //   }),
+      // );
       navigation.goBack();
     } catch (e) {
       console.log(e);
