@@ -1,13 +1,26 @@
 import {Pressable, StyleSheet, View} from 'react-native';
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Appbar, List, Text} from 'react-native-paper';
-import data from './data.json';
 import {FlatList} from 'react-native';
 import SearchBar from '../../components/SearchBar';
 import Spacer from '../../components/Spacer';
+import {useEffect, useState} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {fetchAllComunities} from '../../redux/reducers/communityReducer';
+import {useFocusEffect} from '@react-navigation/native';
 
-const MedLabCommunity = () => {
+const MedLabCommunity = ({navigation}: any) => {
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const community = useSelector((state: any) => state.community);
   const [searchText, setSearchText] = React.useState('');
+  console.log(community);
+  useFocusEffect(
+    useCallback(() => {
+      dispatch(fetchAllComunities());
+    }, []),
+  );
+
   return (
     <>
       <Appbar.Header>
@@ -27,18 +40,26 @@ const MedLabCommunity = () => {
       <View>
         <FlatList
           style={styles.list}
-          data={data}
+          data={community}
           renderItem={({item}: any) => {
             return (
               <List.Item
-                description={item.community_name}
-                descriptionStyle={{fontWeight : 'bold' , fontSize : 14}}
-                title={item.date}
+                description={item.title}
+                descriptionStyle={{fontWeight: 'bold', fontSize: 14}}
+                title={item.createdAt}
                 right={() => (
                   <View style={{alignItems: 'flex-end'}}>
-                    <List.Icon icon={'message'} />
-                    <Pressable>
-                      <Text style={{color: '#225B6E'}}>See More {">"}</Text>
+                    <View style={{flexDirection: 'row', gap: 5}}>
+                      <List.Icon icon={'message'} />
+                      <Text>{item?.comments?.length || 0}</Text>
+                    </View>
+                    <Pressable
+                      onPress={() =>
+                        navigation.navigate('CommunityDetail', {
+                          id: item.id,
+                        })
+                      }>
+                      <Text style={{color: '#225B6E'}}>See More {'>'}</Text>
                     </Pressable>
                   </View>
                 )}

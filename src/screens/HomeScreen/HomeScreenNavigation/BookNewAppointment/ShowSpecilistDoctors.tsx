@@ -18,6 +18,7 @@ import {
   fetchDoctorsBySearch,
   fetchDoctorsBySearchAndSort,
   sortByName,
+  sortByRating,
 } from '../../../../redux/reducers/doctorReducer';
 import {useFocusEffect} from '@react-navigation/native';
 import Calender from '../../../../components/Calender';
@@ -35,7 +36,7 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
   const [longitude, setLongitude] = React.useState(0);
   const [latitude, setLatitude] = React.useState(0);
   const [showTooltip, setShowTooltip] = React.useState(false);
-
+  console.log(doctors);
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchDoctors());
@@ -156,14 +157,12 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
                   }>
                   <Text style={{textAlign: 'left'}}>Sort By Location</Text>
                 </Button>
-                <Button contentStyle={{padding: 0}}>
-                  <Text
-                    style={{textAlign: 'left'}}
-                    onPress={() => dispatch(sortByName())}>
-                    Sort By Name
-                  </Text>
+                <Button
+                  contentStyle={{padding: 0}}
+                  onPress={() => dispatch(sortByName())}>
+                  <Text style={{textAlign: 'left'}}>Sort By Name</Text>
                 </Button>
-                <Button>
+                <Button onPress={() => dispatch(sortByRating())}>
                   <Text style={{textAlign: 'left'}}>Sort By Rating</Text>
                 </Button>
               </View>

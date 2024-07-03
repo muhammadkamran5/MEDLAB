@@ -1,7 +1,7 @@
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
-const initialState: any = [];
+let initialState: any = [];
 
 function haversineDistance(lat1: any, lon1: any, lat2: any, lon2: any) {
   if (lat2 == 0 && lat2 == 0) return 0;
@@ -150,17 +150,22 @@ const doctorSlice = createSlice({
   name: 'doctors',
   initialState: initialState,
   reducers: {
-    sortByName: state => {
-      state.sort((a: any, b: any) => {
-        const nameA = a.fullName.toUpperCase();
-        const nameB = b.fullName.toUpperCase();
-        if (nameA < nameB) {
-          return -1;
-        }
-        if (nameA > nameB) {
-          return 1;
-        }
-        return 0;
+    sortByName(state) {
+      return [...state].sort((a, b) => a.fullName.localeCompare(b.fullName));
+    },
+    sortByRating(state) {
+      return [...state].sort((a, b) => {
+        const sumA = a.feedbacks.reduce(
+          (acc: any, feedback: any) => acc + feedback.rating,
+          0,
+        );
+        const averageA = sumA / a.feedbacks.length;
+        const sumB = b.feedbacks.reduce(
+          (acc: any, feedback: any) => acc + feedback.rating,
+          0,
+        );
+        const averageB = sumB / b.feedbacks.length;
+        return averageB - averageA;
       });
     },
   },
@@ -191,7 +196,7 @@ const doctorSlice = createSlice({
     });
   },
 });
-
+export const {sortByName, sortByRating} = doctorSlice.actions;
 export default doctorSlice.reducer;
 export {
   fetchDoctors,
@@ -199,4 +204,3 @@ export {
   fetchDoctorsBySearch,
   fetchDoctorsBySearchAndSort,
 };
-export const {sortByName} = doctorSlice.actions;

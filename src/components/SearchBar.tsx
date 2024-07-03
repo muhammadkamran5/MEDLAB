@@ -13,6 +13,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     backgroundColor: '#FFFFFF',
     borderRadius: 5,
-    marginHorizontal: 20,
+    
   },
 });

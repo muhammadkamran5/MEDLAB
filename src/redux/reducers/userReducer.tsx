@@ -21,7 +21,7 @@ export const fetchCurrentUser = createAsyncThunk(
         throw new Error('User not found in Firestore');
       }
 
-      return userDoc.data();
+      return {...userDoc.data(), uid: userId};
     } catch (error) {
       console.error('Error fetching current user: ', error);
       return error;
@@ -47,7 +47,6 @@ export const SignInByGoogle = createAsyncThunk(
         );
         const user = userCredential.user;
 
-  
         const userDoc = await firestore()
           .collection('users')
           .doc(user.uid)
@@ -64,7 +63,7 @@ export const SignInByGoogle = createAsyncThunk(
               photo: user.photoURL,
               email: user.email,
               role: 'patient',
-              isFirstTime : 'yes'
+              isFirstTime: 'yes',
             });
           return (
             await firestore().collection('users')?.doc(user.uid)?.get()
@@ -81,9 +80,9 @@ export const SignInByGoogle = createAsyncThunk(
 );
 export const updateUser = createAsyncThunk(
   'user/updateUser',
-  async (data : any): Promise<any> => {
+  async (data: any): Promise<any> => {
     {
-      const {userData , userID} = data;
+      const {userData, userID} = data;
       try {
         const userRef = firestore().collection('users').doc(userID);
         await userRef.update(userData);
