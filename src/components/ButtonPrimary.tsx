@@ -1,13 +1,14 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, { ReactNode } from 'react';
+import React, {ReactNode} from 'react';
 import {Button} from 'react-native-paper';
-import { colors } from '../../themes/theme';
+import {colors} from '../../themes/theme';
+import {IconSource} from 'react-native-paper/lib/typescript/components/Icon';
 
 interface ButtonPrimaryProps {
   children: ReactNode;
   buttonColor?: string;
   textColor?: string;
-
+  icon?: IconSource;
 }
 
 const ButtonPrimary = ({
@@ -15,6 +16,7 @@ const ButtonPrimary = ({
   style,
   buttonColor,
   textColor,
+  icon,
   ...props
 }: any) => {
   return (

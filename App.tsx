@@ -9,7 +9,6 @@ import PhoneNumberSignIn from './src/screens/SigninScreen/PhoneNumberSignIn/Phon
 import LocationInputScreen from './src/screens/SigninScreen/LocationInputScreen/LocationInputScreen';
 import BottomNavigation from './src/components/BottomNavigation';
 import SetUserLocation from './src/screens/SigninScreen/LocationInputScreen/SetUserLocation';
-import ShowSpecilistDoctors from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/ShowSpecilistDoctors';
 import DoctorDetail from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/DoctorDetail';
 import ConfirmAppointment from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/ConfirmAppointment';
 import AppointmentConfirmAlert from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/AppointmentConfirmAlert';
@@ -18,13 +17,48 @@ import {useDispatch} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {fetchCurrentUser} from './src/redux/reducers/userReducer';
 import GiveFeedBack from './src/screens/GiveFeedBack/GiveFeedBack';
+import notifee, {TriggerType, TimeUnit} from '@notifee/react-native';
+import firestore from '@react-native-firebase/firestore';
 
 const Stack = createNativeStackNavigator();
+async function scheduleNotification(time: any) {
+  // Create a channel (required for Android)
+  const channelId = await notifee.createChannel({
+    id: 'default',
+    name: 'Default Channel',
+  });
+  const {seconds, nanoseconds} = time;
+  const milliseconds = seconds * 1000 + nanoseconds / 1000000;
+  const t = new Date(milliseconds);
+  console.log(t)
+  const triggerTimestamp = t.getTime() - 3600000;
+  // console.log(time)
+  // Create a time-based trigger
+  const trigger: any = {
+    type: TriggerType.TIMESTAMP,
+    timestamp: triggerTimestamp, // Schedule notification to appear in 5 seconds
+    repeat: true,
+  };
+
+  // Create the notification
+  await notifee.createTriggerNotification(
+    {
+      title: 'Scheduled Appointment',
+      body: 'You have scheduled appointment in 1 hour',
+      android: {
+        channelId,
+      },
+    },
+    trigger,
+  );
+}
+
 function App(): React.JSX.Element {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
 
   const [showIntro, setShowIntro] = React.useState(true);
   const [isLogin, setIsLogin] = React.useState(false);
+
   useEffect(() => {
     SplashScreen.hide();
     const user = auth().currentUser;
@@ -34,6 +68,22 @@ function App(): React.JSX.Element {
       dispatch(fetchCurrentUser(user.uid));
     }
   }, []);
+  useEffect(() => {
+    const user = auth().currentUser;
+    const fetchScheduleNotification = async () => {
+      const res = firestore()
+        .collection('appointments')
+        .where('patient_id', '==', user?.uid)
+        .get();
+      const data = (await res).docs.map(doc => doc.data());
+      data.forEach((item: any) => {
+        console.log('Time', item);
+        scheduleNotification(item.time);
+      });
+    };
+
+    // fetchScheduleNotification();
+  });
 
   return (
     <NavigationContainer>
@@ -77,7 +127,7 @@ function App(): React.JSX.Element {
               component={MainSignin}
               options={{headerShown: false}}
             />
-               <Stack.Screen
+            <Stack.Screen
               name="BottomNavigation"
               component={BottomNavigation}
               options={{headerShown: false}}
