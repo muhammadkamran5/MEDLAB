@@ -62,7 +62,6 @@ export const SignInByGoogle = createAsyncThunk(
               fullName: user.displayName,
               photo: user.photoURL,
               email: user.email,
-              role: 'patient',
               isFirstTime: 'yes',
             });
           return (

@@ -1,8 +1,8 @@
 import {Image, StyleSheet, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {SvgUri} from 'react-native-svg';
 import auth from '@react-native-firebase/auth';
-import {Text} from 'react-native-paper';
+import {Modal, Portal, Provider, Text} from 'react-native-paper';
 import Logo from '../../../assets/medlablogo/medlablogo.svg';
 import {Button} from 'react-native-paper';
 import Spacer from '../../components/Spacer';
@@ -12,27 +12,34 @@ import {LoginManager, AccessToken, LoginButton} from 'react-native-fbsdk-next';
 import {useDispatch} from 'react-redux';
 import {SignInByGoogle, updateUser} from '../../redux/reducers/userReducer';
 import {ThunkDispatch} from '@reduxjs/toolkit';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
+import DropDownPicker from 'react-native-dropdown-picker';
+import ButtonPrimary from '../../components/ButtonPrimary';
 
 const MainSignin = ({navigation}: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const u = useSelector((state: any) => state.user.currentUser);
+  const [items, setItems] = useState([
+    {label: 'Doctor', value: 'doctor'},
+    {label: 'Patient', value: 'patient'},
+  ]);
+  const [open, setOpen] = useState(false);
+  const [openModal, setOpenModal] = useState(false);
+  const [value, setValue] = useState(null);
+
   useEffect(() => {
     const unsubscribe = auth().onAuthStateChanged(user => {
-      console.log("I am user " , user)
-      
+      console.log('I am user ', user);
 
       if (user) {
-  
-        if(u?.role == 'patient' && u?.isFirstTime == 'yes') {
-
-          navigation.navigate('LocationInput');
-          
-        }else if(u?.role == 'patient'){
+        if (u?.isFirstTime == 'yes') {
+          setOpenModal(true);
+        } else if (u?.role == 'patient') {
           navigation.navigate('BottomNavigation');
-
-        }else{
-          console.log('User is not login')
+        } else if (u?.role == 'doctor') {
+          navigation.navigate('doctor');
+        } else {
+          console.log('User is not login');
         }
       }
     });
@@ -40,45 +47,17 @@ const MainSignin = ({navigation}: any) => {
   }, [u]);
 
   async function onGoogleButtonPress() {
-    // try {
-    //   // Ensure Google Play Services are available
-    //   await GoogleSignin.hasPlayServices({showPlayServicesUpdateDialog: true});
-
-    //   // Sign in with Google
-    //   const {idToken} = await GoogleSignin.signIn();
-
-    //   // Create a Google credential with the token
-    //   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
-
-    //   // Sign-in the user with the credential
-    //   const userCredential = await auth().signInWithCredential(
-    //     googleCredential,
-    //   );
-    //   const user = userCredential.user;
-
-    //   // Add user details to Firestore
-    //   const userDoc = await firestore().collection('users').doc(user.uid).get();
-    //   if (!userDoc.exists) {
-    //     await firestore()
-    //       .collection('users')
-    //       .doc(user.uid)
-    //       .set({
-    //         firstName: user.displayName?.split(' ')[0],
-    //         lastName: user.displayName?.split(' ')[1],
-    //         fullName: user.displayName,
-    //         photo: user.photoURL,
-    //         email: user.email,
-    //         role: 'patient',
-    //       });
-    //   }
-
-    //   console.log('Signed in with Google!');
-    // } catch (error) {
-    //   // Improved error logging
-    //   console.error('Google Sign-In error: ', error);
-    // }
     await dispatch(SignInByGoogle());
   }
+
+  const createAccount = () => {
+    console.log(value);
+    const user = auth().currentUser?.uid;
+    const userData = {role: value};
+    dispatch(updateUser({userData, userID: user}));
+    setOpenModal(false);
+    navigation.navigate('LocationInput');
+  };
 
   async function onFacebookButtonPress() {
     try {
@@ -171,6 +150,36 @@ const MainSignin = ({navigation}: any) => {
           <Text style={{color: '#225B6E'}}>Terms and Conditions</Text>
         </Text>
       </View>
+      <Portal>
+        <Modal
+          visible={openModal}
+          style={{backfaceVisibility: 'hidden'}}
+          onDismiss={() => setOpenModal(false)}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              padding: 30,
+              margin: 20,
+              borderRadius: 10,
+              alignItems: 'center',
+            }}>
+            <Text variant="headlineSmall">Choose Method of Sign in</Text>
+            <Spacer height={10} />
+            <View style={{width: '80%', alignItems: 'center'}}>
+              <DropDownPicker
+                items={items}
+                setItems={setItems}
+                open={open}
+                setOpen={setOpen}
+                value={value}
+                setValue={setValue}
+              />
+            </View>
+            <Spacer height={10} />
+            <ButtonPrimary onPress={createAccount}>Sign in</ButtonPrimary>
+          </View>
+        </Modal>
+      </Portal>
     </View>
   );
 };

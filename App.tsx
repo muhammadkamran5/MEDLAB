@@ -13,12 +13,15 @@ import DoctorDetail from './src/screens/HomeScreen/HomeScreenNavigation/BookNewA
 import ConfirmAppointment from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/ConfirmAppointment';
 import AppointmentConfirmAlert from './src/screens/HomeScreen/HomeScreenNavigation/BookNewAppointment/AppointmentConfirmAlert';
 import auth from '@react-native-firebase/auth';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {fetchCurrentUser} from './src/redux/reducers/userReducer';
 import GiveFeedBack from './src/screens/GiveFeedBack/GiveFeedBack';
 import notifee, {TriggerType, TimeUnit} from '@notifee/react-native';
 import firestore from '@react-native-firebase/firestore';
+import SigninMethod from './src/screens/SigninScreen/SigninMethod';
+import {Text} from 'react-native';
+import DoctorScreen from './src/screens/DoctorScreen/DoctorScreen';
 
 const Stack = createNativeStackNavigator();
 async function scheduleNotification(time: any) {
@@ -30,7 +33,7 @@ async function scheduleNotification(time: any) {
   const {seconds, nanoseconds} = time;
   const milliseconds = seconds * 1000 + nanoseconds / 1000000;
   const t = new Date(milliseconds);
-  console.log(t)
+  console.log(t);
   const triggerTimestamp = t.getTime() - 3600000;
   // console.log(time)
   // Create a time-based trigger
@@ -55,6 +58,7 @@ async function scheduleNotification(time: any) {
 
 function App(): React.JSX.Element {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const user = useSelector((state: any) => state.user.currentUser);
 
   const [showIntro, setShowIntro] = React.useState(true);
   const [isLogin, setIsLogin] = React.useState(false);
@@ -93,33 +97,37 @@ function App(): React.JSX.Element {
             {props => <IntroScreen {...props} setShow={setShowIntro} />}
           </Stack.Screen>
         ) : isLogin ? (
-          <>
-            <Stack.Screen
-              name="BottomNavigation"
-              component={BottomNavigation}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="DoctorDetail"
-              component={DoctorDetail}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="ConfirmAppointment"
-              component={ConfirmAppointment}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="AppointmentConfirmAlert"
-              component={AppointmentConfirmAlert}
-              options={{headerShown: false}}
-            />
-            <Stack.Screen
-              name="GiveFeedBack"
-              component={GiveFeedBack}
-              options={{headerShown: false}}
-            />
-          </>
+          user.role == 'doctor' ? (
+            <Stack.Screen name="doctor" component={DoctorScreen} />
+          ) : (
+            <>
+              <Stack.Screen
+                name="BottomNavigation"
+                component={BottomNavigation}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="DoctorDetail"
+                component={DoctorDetail}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="ConfirmAppointment"
+                component={ConfirmAppointment}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="AppointmentConfirmAlert"
+                component={AppointmentConfirmAlert}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name="GiveFeedBack"
+                component={GiveFeedBack}
+                options={{headerShown: false}}
+              />
+            </>
+          )
         ) : (
           <>
             <Stack.Screen
@@ -127,6 +135,13 @@ function App(): React.JSX.Element {
               component={MainSignin}
               options={{headerShown: false}}
             />
+             <Stack.Screen name="doctor" component={DoctorScreen} />
+            <Stack.Screen
+              name="SignInMethod"
+              component={SigninMethod}
+              options={{headerShown: false}}
+            />
+
             <Stack.Screen
               name="BottomNavigation"
               component={BottomNavigation}

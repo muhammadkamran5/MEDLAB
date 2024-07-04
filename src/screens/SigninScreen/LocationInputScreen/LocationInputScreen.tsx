@@ -1,5 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Button, TextInput} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -10,7 +10,9 @@ import Spacer from '../../../components/Spacer';
 const LocationInputScreen = ({navigation, ...props}: any) => {
   const [address, setAddress] = React.useState('');
   const [allowEditing, setAllowEditing] = React.useState(true);
-  console.log(auth().currentUser)
+  const [longitude, setLongitude] = useState(0);
+  const [latitude, setLatitude] = useState(0);
+  console.log(auth().currentUser);
   useEffect(() => {
     // if (address) {
     //   setAllowEditing(false);
@@ -36,7 +38,11 @@ const LocationInputScreen = ({navigation, ...props}: any) => {
           left={
             <TextInput.Icon
               onPress={() => {
-                navigation.navigate('SelectLocation' , setAddress);
+                navigation.navigate('SelectLocation', {
+                  setAddress,
+                  setLat: setLatitude,
+                  setLng: setLongitude,
+                });
               }}
               icon="map-marker"
             />
@@ -53,6 +59,11 @@ const LocationInputScreen = ({navigation, ...props}: any) => {
               .doc(auth().currentUser?.uid)
               .update({
                 address: address,
+                location: {
+                  lat: latitude,
+                  lng: longitude,
+                },
+                isFirstTime : 'no'
               });
             props.setLogin(true);
           }}>
