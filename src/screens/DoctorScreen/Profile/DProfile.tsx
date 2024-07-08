@@ -25,13 +25,17 @@ import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {
   fetchCurrentUser,
+  logoutUser,
   updateUser,
 } from '../../../redux/reducers/userReducer';
 import MenuItem from 'react-native-paper/lib/typescript/components/Menu/MenuItem';
+import { setIsLogin } from '../../../redux/reducers/isLoginReducer';
 
 const DProfile = ({navigation}: any) => {
   const user = useSelector((state: any) => state.user.currentUser);
+  const isLogin = useSelector((state: any) => state.isLogin.isLogin);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  console.log(isLogin)
 
   const [profileState, setProfileState] = useState({
     isEditingMode: false,
@@ -250,13 +254,11 @@ const DProfile = ({navigation}: any) => {
             />
           }>
           <Menu.Item
-            title="Edit Info"
-            onPress={() =>
-              setProfileState(prevState => ({
-                ...prevState,
-                isMenuVisible: false,
-              }))
-            }
+            title="Logout"
+            onPress={() => {
+              dispatch(logoutUser());
+              dispatch(setIsLogin(false))
+            }}
           />
         </Menu>
       </Appbar.Header>

@@ -10,6 +10,7 @@ import ShowSpecilistDoctors from './BookNewAppointment/ShowSpecilistDoctors';
 import MedLabCommunity from '../../MedLabCommunity/MedLabCommunity';
 import GiveFeedBack from '../../GiveFeedBack/GiveFeedBack';
 import MedLabCommunityDetail from '../../MedLabCommunity/MedLabCommunityDetail';
+import DoctorDetail from './BookNewAppointment/DoctorDetail';
 
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +25,7 @@ const HomeScreenNavigation = () => {
       <Stack.Screen name="CommunityDetail" component={MedLabCommunityDetail} />
       <Stack.Screen name="Hospitals" component={Hospitals} />
       <Stack.Screen name='ShowSpecilistDoctors' component={ShowSpecilistDoctors} options={{headerShown : false}} />
+        <Stack.Screen name='DoctorDetail' component={DoctorDetail} options={{headerShown : false}} />
     </Stack.Navigator>
   );
 };

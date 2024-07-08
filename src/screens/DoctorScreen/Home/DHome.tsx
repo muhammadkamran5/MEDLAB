@@ -22,22 +22,45 @@ import UserIcon from '../../../../assets/userIcon.svg';
 import Lock from '../../../../assets/Lock.svg';
 import styles from './styles';
 import SearchBar from '../../../components/SearchBar';
-import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 
 import {FlatGrid} from 'react-native-super-grid';
 import {useEffect, useState} from 'react';
 import {useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 
-import DatePicker from 'react-native-date-picker';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ButtonSecondary from '../../../components/ButtonSecondary';
 import ButtonPrimary from '../../../components/ButtonPrimary';
+import {colors} from '../../../../themes/theme';
 
 const DHome = ({navigation}: any) => {
-
+  const user = useSelector((state: any) => state.user.currentUser);
   const [searchText, setSearchText] = useState('');
+  const [clinics, setClinics]: any = useState([]);
+  const [selectedClinic, setSelectedClinic]: any = useState(null);
+  const [isVisible, setVisible]: any = useState(false);
+  const [isOpen, setOpen] = useState(false);
+  useEffect(() => {
+    if (user && Array.isArray(user.clinic_id)) {
+      const fetchClinics = async () => {
+        const clinicPromises = user.clinic_id.map((id: any) =>
+          firestore().collection('clinic').doc(id).get(),
+        );
+        const clinicsSnapShot = await Promise.all(clinicPromises);
+        const clinicData: any = clinicsSnapShot.map(doc => ({
+          label: doc.data().name,
+          value: doc.id,
+        }));
+        setClinics(clinicData);
+      };
+      fetchClinics();
+    }
+  }, [user]);
 
+  const getClinicName = () => {
+    const clinic = clinics.find((c: any) => c.value === selectedClinic);
+    return clinic ? clinic.label : '';
+  };
 
   const data = [
     {
@@ -94,7 +117,11 @@ const DHome = ({navigation}: any) => {
             <Card
               style={styles.card}
               onPress={() => {
-                navigation.navigate(item.navigationUrl);
+                if (item.navigationUrl == 'DAppointments') {
+                  setVisible(true);
+                } else {
+                  navigation.navigate(item.navigationUrl);
+                }
               }}>
               <Card.Title
                 title={item.title}
@@ -120,17 +147,11 @@ const DHome = ({navigation}: any) => {
             <View style={styles.cardButtons}>
               <Button
                 mode="contained"
-                buttonColor="#ECF1FA"
-                textColor="#225B6E"
-                style={styles.button}>
+                buttonColor={colors.PRIMARY}
+                textColor="white"
+                style={styles.button}
+                onPress={() => navigation.navigate('AllQuestions')}>
                 View All Questions
-              </Button>
-              <Button
-                mode="contained-tonal"
-                buttonColor="#3AA1A2"
-                textColor="#fff"
-                style={styles.button}>
-                Ask a Question
               </Button>
             </View>
           </Card.Actions>
@@ -157,6 +178,45 @@ const DHome = ({navigation}: any) => {
         </Card>
         <Spacer height={10} />
       </View>
+      <Portal>
+        <Modal visible={isVisible} onDismiss={() => setVisible(false)}>
+          <View
+            style={{
+              backgroundColor: 'white',
+              margin: 10,
+              paddingTop: 40,
+              paddingBottom: 20,
+              paddingHorizontal: 10,
+              borderRadius: 10,
+            }}>
+            <DropDownPicker
+              items={clinics}
+              containerStyle={{height: 40}}
+              style={{backgroundColor: '#fafafa'}}
+              value={selectedClinic}
+              setValue={setSelectedClinic}
+              open={isOpen}
+              setOpen={setOpen}
+            />
+            <Spacer height={10} />
+            <View
+              style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+              <ButtonSecondary onPress={() => setVisible(false)}>
+                Cancel
+              </ButtonSecondary>
+              <ButtonPrimary
+                onPress={() => {
+                  navigation.navigate('DAppointments', {
+                    clinic_id: selectedClinic,
+                  });
+                  setVisible(false);
+                }}>
+                Select
+              </ButtonPrimary>
+            </View>
+          </View>
+        </Modal>
+      </Portal>
     </ScrollView>
   );
 };

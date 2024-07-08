@@ -26,23 +26,23 @@ const ClinicinfoScreen = () => {
           <Text style={styles.title} variant='headlineSmall'>Clinic Information</Text>
           <Paragraph>
             <Text variant="bodyMedium" style={styles.label}>Name: </Text>
-            <Text variant="bodyMedium" style={styles.value}>{clinic.name}</Text>
+            <Text variant="bodyMedium" style={styles.value}>{clinic?.name}</Text>
           </Paragraph>
           <Paragraph>
             <Text variant="bodyMedium" style={styles.label}>Email: </Text>
-            <Text variant="bodyMedium" style={styles.value}>{clinic.email}</Text>
+            <Text variant="bodyMedium" style={styles.value}>{clinic?.email}</Text>
           </Paragraph>
           <Paragraph>
             <Text variant="bodyMedium" style={styles.label}>Address: </Text>
-            <Text variant="bodyMedium" style={styles.value}>{clinic.address}</Text>
+            <Text variant="bodyMedium" style={styles.value}>{clinic?.address}</Text>
           </Paragraph>
           <Paragraph>
             <Text variant="bodyMedium" style={styles.label}>Contact Number: </Text>
-            <Text variant="bodyMedium" style={styles.value}>{clinic.contactNumber}</Text>
+            <Text variant="bodyMedium" style={styles.value}>{clinic?.contactNumber}</Text>
           </Paragraph>
           <Paragraph>
             <Text variant="bodyMedium" style={styles.label}>Services: </Text>
-            <Text variant="bodyMedium" style={styles.value}>{clinic.services}</Text>
+            <Text variant="bodyMedium" style={styles.value}>{clinic?.services}</Text>
           </Paragraph>
         </View>
       </View>

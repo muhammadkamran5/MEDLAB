@@ -9,6 +9,7 @@ import MedLabCommunity from '../../MedLabCommunity/MedLabCommunity';
 import MedLabCommunityDetail from '../../MedLabCommunity/MedLabCommunityDetail';
 import Records from '../../HomeScreen/HomeScreenNavigation/Records/Records';
 import AllHospitals from './DHomeNavigations/Hospitals/AllHospitals';
+import AllQuestions from './DHomeNavigations/Questions/AllQuestions';
 
 const Stack = createNativeStackNavigator();
 const DHomeNavigations = () => {
@@ -47,6 +48,11 @@ const DHomeNavigations = () => {
       <Stack.Screen
         name="Hospitals"
         component={AllHospitals}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AllQuestions"
+        component={AllQuestions}
         options={{headerShown: false}}
       />
     </Stack.Navigator>

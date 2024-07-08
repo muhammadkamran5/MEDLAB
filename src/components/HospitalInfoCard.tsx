@@ -6,7 +6,7 @@ import StarRating from 'react-native-star-rating-widget';
 
 interface cardProps {
   title: string;
-  occopation ?: string;
+  email ?: string;
   location: string;
   ratingCount?: number;
   rating ?: number
@@ -14,7 +14,7 @@ interface cardProps {
 
 const HospitalInfoCard = ({
   title,
-  occopation,
+  email,
   location,
   ratingCount,
   rating
@@ -28,7 +28,7 @@ const HospitalInfoCard = ({
       <View>
         <Text variant="headlineSmall">{title} </Text>
         <Text variant="bodyMedium" style={styles.detailText}>
-          {occopation}
+          {email}
         </Text>
         <Text variant="bodyMedium" style={styles.detailText}>
           {location}

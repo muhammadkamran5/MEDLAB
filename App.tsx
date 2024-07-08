@@ -22,6 +22,7 @@ import firestore from '@react-native-firebase/firestore';
 import SigninMethod from './src/screens/SigninScreen/SigninMethod';
 import {Text} from 'react-native';
 import DoctorScreen from './src/screens/DoctorScreen/DoctorScreen';
+import {setIsLogin} from './src/redux/reducers/isLoginReducer';
 
 const Stack = createNativeStackNavigator();
 async function scheduleNotification(time: any) {
@@ -59,17 +60,17 @@ async function scheduleNotification(time: any) {
 function App(): React.JSX.Element {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const user = useSelector((state: any) => state.user.currentUser);
+  const isLogin = useSelector((state: any) => state.isLogin.isLogin);
 
   const [showIntro, setShowIntro] = React.useState(true);
-  const [isLogin, setIsLogin] = React.useState(false);
 
   useEffect(() => {
     SplashScreen.hide();
     const user = auth().currentUser;
     if (user) {
-      setIsLogin(true);
       setShowIntro(false);
       dispatch(fetchCurrentUser(user.uid));
+      dispatch(setIsLogin(true));
     }
   }, []);
   useEffect(() => {
@@ -91,14 +92,16 @@ function App(): React.JSX.Element {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{headerShown : false}}>
+      <Stack.Navigator screenOptions={{headerShown: false}}>
         {showIntro ? (
           <Stack.Screen name="Intro" options={{headerShown: false}}>
             {props => <IntroScreen {...props} setShow={setShowIntro} />}
           </Stack.Screen>
         ) : isLogin ? (
           user.role == 'doctor' ? (
-            <Stack.Screen name="doctor" component={DoctorScreen} />
+            <Stack.Screen name="doctor">
+              {props => <DoctorScreen {...props} setLogin={setIsLogin} />}
+            </Stack.Screen>
           ) : (
             <>
               <Stack.Screen
@@ -135,7 +138,7 @@ function App(): React.JSX.Element {
               component={MainSignin}
               options={{headerShown: false}}
             />
-             <Stack.Screen name="doctor" component={DoctorScreen} />
+            <Stack.Screen name="doctor" component={DoctorScreen} />
             <Stack.Screen
               name="SignInMethod"
               component={SigninMethod}

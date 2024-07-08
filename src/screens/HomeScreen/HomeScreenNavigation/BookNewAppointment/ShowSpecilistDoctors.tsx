@@ -55,8 +55,10 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
     );
   };
   const getAverageRating = (feedbacks: any) => {
-    const feedback = feedbacks.map((feedback: any) => feedback.rating);
+    const feedback =
+      feedbacks && feedbacks.map((feedback: any) => feedback.rating);
     const averageRating =
+      feedbacks &&
       feedback.reduce((a: number, b: number) => a + b, 0) / feedback.length;
     return averageRating;
   };

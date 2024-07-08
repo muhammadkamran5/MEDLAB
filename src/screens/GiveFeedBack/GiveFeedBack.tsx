@@ -86,7 +86,7 @@ const GiveFeedBack = ({navigation}: any) => {
           title={doctor.fullName}
           occopation={doctor.specialties}
           location={doctor.address}
-          ratingCount={doctor?.feedbacks.length}
+          ratingCount={doctor?.feedbacks?.length}
           rating={rating}
         />
         <Spacer height={7} />

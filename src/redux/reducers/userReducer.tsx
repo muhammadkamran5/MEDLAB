@@ -94,6 +94,20 @@ export const updateUser = createAsyncThunk(
     }
   },
 );
+
+export const logoutUser = createAsyncThunk(
+  'user/logoutUser',
+  async (): Promise<any> => {
+    try {
+      await auth().signOut();
+      return {currentUser: {}};
+    } catch (error) {
+      console.error('Error logging out user: ', error);
+      return error;
+    }
+  },
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState: initialState,
@@ -116,6 +130,12 @@ const userSlice = createSlice({
         state.currentUser = action.payload;
       })
       .addCase(updateUser.rejected, (state, action) => {
+        state.error = action.error.message;
+      })
+      .addCase(logoutUser.fulfilled, (state, action) => {
+        state.currentUser = action.payload;
+      })
+      .addCase(logoutUser.rejected, (state, action) => {
         state.error = action.error.message;
       });
   },

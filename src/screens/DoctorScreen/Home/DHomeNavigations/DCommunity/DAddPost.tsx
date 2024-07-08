@@ -3,6 +3,7 @@ import React, {useState} from 'react';
 import {Button, HelperText, TextInput} from 'react-native-paper';
 import {useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
+import ButtonPrimary from '../../../../../components/ButtonPrimary';
 
 const DAddPost = ({navigation}: any) => {
   const user: any = useSelector((state: any) => state.user.currentUser);
@@ -47,9 +48,7 @@ const DAddPost = ({navigation}: any) => {
         numberOfLines={10}
         style={{backgroundColor: 'white'}}
       />
-      <Button mode="contained" onPress={handleSave}>
-        Save Post
-      </Button>
+      <ButtonPrimary onPress={handleSave}>Save Post</ButtonPrimary>
     </ScrollView>
   );
 };

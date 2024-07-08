@@ -19,8 +19,9 @@ import {ThunkDispatch} from '@reduxjs/toolkit';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchDoctorByID} from '../../../../redux/reducers/doctorReducer';
 import {colors} from '../../../../../themes/theme';
+import firestore from '@react-native-firebase/firestore';
 
-const ConfirmBookAppointment = ({route, navigation}: any) => {
+const DoctorDetail = ({route, navigation}: any) => {
   const id = route.params;
   const doctor = useSelector((state: any) => state.doctors);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -44,6 +45,19 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
       setAverageRating(average && average);
     };
     getAverage();
+    const fetchDates = async()=>{
+      const userRef = firestore().collection('users').doc(id);
+      const appointmentsQuery = userRef.collection('available_slots');
+  
+      const appointmentsSnapshot = await appointmentsQuery.get();
+      const appointments = appointmentsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+
+      console.log(appointments)
+    }
+    fetchDates()
   }, [doctor]);
 
   return (
@@ -65,7 +79,7 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
         />
       </Appbar.Header>
 
-      {doctor?.availability ? (
+      {doctor ? (
         <>
           <View style={styles.doctorDetail}>
             <DoctorInformationCard
@@ -124,7 +138,7 @@ const ConfirmBookAppointment = ({route, navigation}: any) => {
   );
 };
 
-export default ConfirmBookAppointment;
+export default DoctorDetail;
 
 const styles = StyleSheet.create({
   doctorDetail: {
