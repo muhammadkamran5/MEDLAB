@@ -29,7 +29,6 @@ const {height} = Dimensions.get('window');
 const HomeScreen = ({navigation}: any) => {
 
   const user = useSelector((state : any) => state.user.currentUser)
-  console.log("Redux User " ,user)
   const [searchText, setSearchText] = useState('');
   const data = [
     {

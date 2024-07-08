@@ -70,6 +70,7 @@ const MedLabCommunityDetail = ({route, navigation}: any) => {
         },
       }),
     );
+    setCommentText('');
   };
   console.log("Data" , usersData)
 

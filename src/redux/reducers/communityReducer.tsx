@@ -5,18 +5,26 @@ import {
 } from '@reduxjs/toolkit';
 
 import firestore from '@react-native-firebase/firestore';
-import {RootState} from '@reduxjs/toolkit/query';
 
 const initialState: any = [];
 const getCurrentDate = () =>
   new Date().toISOString().split('T')[0].replace(/-/g, '/');
+
+const firebaseDateToString = (date: any) => {
+  return date.toDate().toLocaleDateString();
+};
+
 const fetchAllComunities = createAsyncThunk(
   'community/fetchAllComunities',
   async () => {
-    const snapShot = await firestore().collection('community').get();
+    const snapShot = await firestore().collection('posts').get();
 
     const communities: any = snapShot.docs.map(documentSnapshot => {
-      return {...documentSnapshot.data(), id: documentSnapshot.id};
+      return {
+        ...documentSnapshot.data(),
+        createdAt: firebaseDateToString(documentSnapshot.data().createdAt),
+        id: documentSnapshot.id,
+      };
     });
     return communities;
   },
@@ -25,9 +33,13 @@ const fetchAllComunities = createAsyncThunk(
 const fetchCommunityById = createAsyncThunk(
   'community/fetchCommunityById',
   async (id: string) => {
-    const snapShot = await firestore().collection('community').doc(id).get();
+    const snapShot = await firestore().collection('posts').doc(id).get();
 
-    const community: any = {...snapShot.data(), id: snapShot.id};
+    const community: any = {
+      ...snapShot.data(),
+      createdAt: firebaseDateToString(snapShot?.data()?.createdAt),
+      id: snapShot.id,
+    };
     return community;
   },
 );
@@ -42,13 +54,17 @@ const addComment = createAsyncThunk(
         ...(state?.community?.comments || []),
         {...comment, date: getCurrentDate()},
       ];
-      const communityRef = firestore().collection('community').doc(communityId);
+      const communityRef = firestore().collection('posts').doc(communityId);
 
       await communityRef.update({comments: updatedComments});
 
       const updatedCommunityDoc = await communityRef.get();
 
-      return {...updatedCommunityDoc.data(), id: updatedCommunityDoc.id};
+      return {
+        ...updatedCommunityDoc.data(),
+        createdAt: firebaseDateToString(updatedCommunityDoc?.data()?.createdAt),
+        id: updatedCommunityDoc.id,
+      };
     } catch (error: any) {
       console.error('Error updating community comments:', error);
       return rejectWithValue(error?.message);

@@ -9,12 +9,14 @@ import {useSelector, useDispatch} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {fetchAllComunities} from '../../redux/reducers/communityReducer';
 import {useFocusEffect} from '@react-navigation/native';
+import {FAB} from 'react-native-paper';
+import { colors } from '../../../themes/theme';
 
 const MedLabCommunity = ({navigation}: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
+  const user = useSelector((state: any) => state.user.currentUser);
   const community = useSelector((state: any) => state.community);
   const [searchText, setSearchText] = React.useState('');
-  console.log(community);
   useFocusEffect(
     useCallback(() => {
       dispatch(fetchAllComunities());
@@ -29,14 +31,22 @@ const MedLabCommunity = ({navigation}: any) => {
 
       <View style={styles.container}>
         <Text variant="headlineMedium">MedLab Community</Text>
+        <Spacer height={10} />
+        <SearchBar
+          value={searchText}
+          placeholder="Search"
+          onChangeText={setSearchText}
+        />
       </View>
-      <Spacer height={10} />
-      <SearchBar
-        value={searchText}
-        placeholder="Search"
-        onChangeText={setSearchText}
-      />
-      <Spacer height={10} />
+      {user?.role == 'doctor' && (
+        <FAB
+          icon={'plus'}
+          style={styles.fab}
+          onPress={() => navigation.navigate('DAddPost')}
+          color='white'
+          
+        />
+      )}
       <View>
         <FlatList
           style={styles.list}
@@ -80,5 +90,12 @@ const styles = StyleSheet.create({
   },
   list: {
     marginHorizontal: 10,
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 0,
+    bottom: 0,
+    backgroundColor: colors.PRIMARY
   },
 });

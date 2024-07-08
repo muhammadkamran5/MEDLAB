@@ -13,7 +13,7 @@ const FeedBackCard = (props: any) => {
           />
         )}
 
-        <Text>{props.user.fullName}</Text>
+        <Text>***** {props.user.lastName}</Text>
       </View>
       <Spacer height={7} />
       <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>

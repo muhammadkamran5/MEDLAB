@@ -91,7 +91,7 @@ function App(): React.JSX.Element {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator screenOptions={{headerShown : false}}>
         {showIntro ? (
           <Stack.Screen name="Intro" options={{headerShown: false}}>
             {props => <IntroScreen {...props} setShow={setShowIntro} />}

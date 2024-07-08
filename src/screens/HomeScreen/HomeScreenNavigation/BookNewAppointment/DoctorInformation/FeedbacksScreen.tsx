@@ -4,6 +4,7 @@ import FeedBackCard from '../../../../../components/FeedBackCard';
 import {useSelector} from 'react-redux';
 import fireStore from '@react-native-firebase/firestore';
 
+
 const FeedbacksScreen = () => {
   const doctor = useSelector((state: any) => state.doctors);
   const [feedbacks, setFeedbacks]: any = useState([]);
@@ -34,7 +35,7 @@ const FeedbacksScreen = () => {
   const getUser = async (patientID: string) => {
     const user = await fireStore().collection('users').doc(patientID).get();
     if (user.exists) {
-      return {fullName: user?.data()?.fullName, photo: user?.data()?.photo};
+      return {lastName: user?.data()?.lastName, photo: user?.data()?.photo};
     }
     return {};
   };

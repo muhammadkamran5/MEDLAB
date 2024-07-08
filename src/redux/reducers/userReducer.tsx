@@ -85,7 +85,8 @@ export const updateUser = createAsyncThunk(
       try {
         const userRef = firestore().collection('users').doc(userID);
         await userRef.update(userData);
-        return (await firestore().collection('users').doc(userID).get()).data();
+        const userDoc = await userRef.get();
+        return userDoc.data();
       } catch (error) {
         console.error('Error updating user: ', error);
         return error;
