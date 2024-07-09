@@ -10,7 +10,7 @@ import {
   Text,
   TextInput,
 } from 'react-native-paper';
-import {View, ScrollView} from 'react-native';
+import {View, ScrollView, BackHandler} from 'react-native';
 import MenuBarIcon from '../../../../assets/menuBarIcon.svg';
 import Spacer from '../../../components/Spacer';
 import Records from '../../../../assets/Records.svg';
@@ -25,15 +25,23 @@ import SearchBar from '../../../components/SearchBar';
 
 import {FlatGrid} from 'react-native-super-grid';
 import {useEffect, useState} from 'react';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 
 import DropDownPicker from 'react-native-dropdown-picker';
 import ButtonSecondary from '../../../components/ButtonSecondary';
 import ButtonPrimary from '../../../components/ButtonPrimary';
 import {colors} from '../../../../themes/theme';
+import {ThunkDispatch} from '@reduxjs/toolkit';
+import {setIsLogin} from '../../../redux/reducers/isLoginReducer';
+
+// BackHandler.addEventListener('hardwareBackPress', () => {
+//   BackHandler.exitApp();
+//   return true;
+// });
 
 const DHome = ({navigation}: any) => {
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const user = useSelector((state: any) => state.user.currentUser);
   const [searchText, setSearchText] = useState('');
   const [clinics, setClinics]: any = useState([]);
@@ -61,6 +69,8 @@ const DHome = ({navigation}: any) => {
     const clinic = clinics.find((c: any) => c.value === selectedClinic);
     return clinic ? clinic.label : '';
   };
+  const isLogin = useSelector((state: any) => state.isLogin.isLogin);
+  console.log(isLogin);
 
   const data = [
     {

@@ -87,6 +87,54 @@ const fetchDoctorsBySearch = createAsyncThunk(
     }
   },
 );
+
+export const fetchDoctorByDate = createAsyncThunk(
+  'doctors/fetchDoctorByDate',
+  async ({ date } : any) => {
+    // Convert the date to a Firebase Timestamp
+    const timestamp = firestore.Timestamp.fromDate(new Date(date));
+
+    const snapshot = await firestore()
+      .collection('users')
+      .where('role', '==', 'doctor')
+      .get();
+
+    const doctors = snapshot.docs;
+
+    const results = await Promise.all(
+      doctors.map(async (doc) => {
+        const slotsSnapshot = await firestore()
+          .collection('users')
+          .doc(doc.id)
+          .collection('available_slots')
+          .where('date', '==', timestamp)
+          .get();
+
+        const slots = slotsSnapshot.docs.map(slotDoc => ({
+          ...slotDoc.data(),
+          id: slotDoc.id,
+        }));
+
+        if (slots.length > 0) {
+          // Return doctor details along with available slots
+          return {
+            ...doc.data(),
+            doctorId: doc.id,
+            availableSlots: slots,
+          };
+        } else {
+          // Return null if no available slots found for the doctor
+          return null;
+        }
+      })
+    );
+
+    // Filter out doctors with no available slots on the given date
+    const filteredResults = results.filter(result => result !== null);
+
+    return filteredResults;
+  }
+);
 const fetchDoctorsBySearchAndSort = createAsyncThunk(
   'doctors/fetchDoctorsBySearchAndSort',
   async ({search, address, date, latitude, longitude}: any) => {
@@ -145,7 +193,23 @@ const fetchDoctorByID = createAsyncThunk(
     return {...data, uid: id};
   },
 );
-
+export const updateDoctor = createAsyncThunk(
+  'user/updateDoctor',
+  async (data: any): Promise<any> => {
+    {
+      const {userData, userID} = data;
+      try {
+        const userRef = firestore().collection('users').doc(userID);
+        await userRef.update(userData);
+        const userDoc = await userRef.get();
+        return userDoc.data();
+      } catch (error) {
+        console.error('Error updating user: ', error);
+        return error;
+      }
+    }
+  },
+);
 const doctorSlice = createSlice({
   name: 'doctors',
   initialState: initialState,
@@ -194,6 +258,11 @@ const doctorSlice = createSlice({
     builder.addCase(fetchDoctorsBySearchAndSort.rejected, (state, action) => {
       return [];
     });
+    builder.addCase(updateDoctor.fulfilled, (state, action) => {
+      return action.payload;
+    }).addCase(updateDoctor.rejected, (state, action) => {
+      return [];
+    })
   },
 });
 export const {sortByName, sortByRating} = doctorSlice.actions;

@@ -1,17 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import {
-  FlatList,
-  Image,
-  Pressable,
   ScrollView,
   StyleSheet,
   ToastAndroid,
   View,
-  Modal,
-  KeyboardAvoidingView,
+  Pressable,
+  FlatList,
+  Image,
 } from 'react-native';
 import BackIcon from '../../../../../assets/Back.svg';
-import {Appbar, IconButton, Text, Button, Divider} from 'react-native-paper';
+import {
+  Appbar,
+  IconButton,
+  Text,
+  Button,
+  Divider,
+  ActivityIndicator,
+} from 'react-native-paper';
 import Spacer from '../../../../components/Spacer';
 import KInput from '../../../../components/KInput';
 import ButtonPrimary from '../../../../components/ButtonPrimary';
@@ -21,41 +26,17 @@ import DropDownPicker from 'react-native-dropdown-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {updateUser} from '../../../../redux/reducers/userReducer';
-import { LogBox } from 'react-native';
+import {LogBox} from 'react-native';
+import {colors} from '../../../../../themes/theme';
 
 const updateAppointmentStatusData = (userData: any, date: any, time: any) => {
-  // Make a copy of the availability array to avoid mutating the original userData
   const updatedAvailability = [...userData.availability];
-
-  // Update the first item in the availability array
-  if (updatedAvailability.length > 0) {
-    updatedAvailability[0].dates = updatedAvailability[0].dates.map(
-      (item: any) => {
-        if (item && item.date === date && item.time_slots) {
-          return {
-            ...item,
-            time_slots: item.time_slots.map((slot: any) => {
-              if (slot.time === time) {
-                return {...slot, status: 'Confirmed'};
-              }
-              return slot;
-            }),
-          };
-        }
-        return item;
-      },
-    );
-  }
-
-  // Return the updated availability array
   return updatedAvailability;
 };
 
 const getTimes = (date: any, dates: any) => {
-  console.log(dates);
   const times = dates.find((item: any) => item.date === date);
-  // return times
-  return times?.time_slots?.map((item: any) => item?.time);
+  return times?.times || [];
 };
 
 const ConfirmAppointment = ({route, navigation}: any) => {
@@ -65,46 +46,68 @@ const ConfirmAppointment = ({route, navigation}: any) => {
 
   const currentUser = auth().currentUser;
   const [note, setNote] = useState('');
+  const [appointments, setAppointments]: any = useState([]);
   const [selectedDate, setSelectedDate] = useState(date);
   const [selectedTime, setSelectedTime] = useState(time);
-  const [selectedDateOption, setSelectedDateOption] = useState(null);
-  const [selectedTimeOption, setSelectedTimeOption] = useState(null);
+  const [selectedDateOption, setSelectedDateOption] = useState(date);
+  const [selectedTimeOption, setSelectedTimeOption] = useState(time);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isOpenDate, setIsOpenDate] = useState(false);
   const [isOpenTime, setIsOpenTime] = useState(false);
-  const times = getTimes(date, doctor.availability[0].dates);
+  const [timeOptions, setTimeOptions]: any = useState([]);
+  const [dateOptions, setDateOptions] = useState([{label: date, value: date}]);
+  const [loading, setLoading] = useState(true);
 
-  const [timeOptions, setTimeOptions] = useState(
-    times ? times.map((item: any) => ({label: item, value: item})) : [],
-  );
-  const [dateOptions, setDateOptions] = useState(
-    doctor.availability[0].dates.map((item: any) => ({
-      label: item.date,
-      value: item.date,
-    })),
-  );
-useEffect(()=>{
-  LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
-}, [])
   useEffect(() => {
-    console.log(dateOptions);
-    const times = getTimes(selectedDateOption, doctor.availability[0].dates);
-    times &&
-      setTimeOptions(times.map((item: any) => ({label: item, value: item})));
-    console.log(timeOptions);
-  }, [selectedDateOption]);
+    LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
+    const fetchDates = async () => {
+      try {
+        const userRef = firestore().collection('users').doc(doctorID);
+        const appointmentsQuery = userRef.collection('available_slots');
+        const appointmentsSnapshot = await appointmentsQuery.get();
+        const appointments = appointmentsSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setAppointments(appointments);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching dates:', error);
+        setLoading(false);
+      }
+    };
+    fetchDates();
+  }, [doctorID]);
+
+  useEffect(() => {
+    if (!loading) {
+      const options = appointments.map((item: any) => ({
+        label: item.date.toDate().toDateString(),
+        value: item.date.toDate().toDateString(),
+      }));
+      setDateOptions(options);
+      console.log(selectedDate);
+      const ap = appointments.filter(
+        (item: any) => item.date.toDate().toDateString() === selectedDate,
+      )[0];
+      ap &&
+        setTimeOptions(
+          ap.times.map((time: any) => ({
+            label: new Date(time).toLocaleTimeString('us', {hour12: true}),
+            value: new Date(time).toLocaleTimeString('us', {hour12: true}),
+          })),
+        );
+    }
+  }, [appointments, loading, selectedDate]);
 
   const handleApply = () => {
-    // Handle applying the selected date and time
     setSelectedDate(selectedDateOption);
     setSelectedTime(selectedTimeOption);
-    // Handle selectedTimeOption as needed
-    setIsModalVisible(false); // Close the modal after applying
+    setIsModalVisible(false);
   };
 
   const handleCancel = () => {
-    // Handle canceling selection
-    setIsModalVisible(false); // Close the modal
+    setIsModalVisible(false);
   };
 
   const toggleModal = () => {
@@ -121,27 +124,21 @@ useEffect(()=>{
         time: selectedTime,
         date: selectedDate,
       });
-      const userData = (
-        await firestore().collection('users').doc(doctor.uid).get()
-      ).data();
-      console.log(userData);
-      console.log(
-        updateAppointmentStatusData(userData, selectedDate, selectedTime),
-      );
-      const updateData = {
-        availability: updateAppointmentStatusData(
-          userData,
-          selectedDate,
-          selectedTime,
-        ),
-      };
-      dispatch(updateUser({userData: updateData, userID: doctor.uid}));
+
       ToastAndroid.show('Appointment added successfully', ToastAndroid.SHORT);
       navigation.navigate('AppointmentConfirmAlert');
     } catch (error) {
       console.error('Error adding appointment: ', error);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+        <ActivityIndicator color={colors.PRIMARY} />
+      </View>
+    );
+  }
 
   return (
     <ScrollView>
@@ -171,11 +168,10 @@ useEffect(()=>{
               items={dateOptions}
               containerStyle={{height: 40}}
               style={{backgroundColor: '#fafafa'}}
-              setItems={setDateOptions}
               value={selectedDateOption}
-              setValue={(value : any)=> {
-                setSelectedDateOption(value)
-                setSelectedDate(value)
+              setValue={(value: any) => {
+                setSelectedDateOption(value);
+                setSelectedDate(value);
               }}
               open={isOpenDate}
               setOpen={setIsOpenDate}
@@ -187,11 +183,10 @@ useEffect(()=>{
               items={timeOptions}
               containerStyle={{height: 40}}
               style={{backgroundColor: '#fafafa'}}
-              setItems={setTimeOptions}
               value={selectedTimeOption}
-              setValue={(value : any)=> {
-                setSelectedTimeOption(value)
-                setSelectedTime(value)
+              setValue={(value: any) => {
+                setSelectedTimeOption(value);
+                setSelectedTime(value);
               }}
               open={isOpenTime}
               setOpen={setIsOpenTime}
@@ -224,7 +219,7 @@ useEffect(()=>{
             {image: require('./Card1.png')},
             {image: require('./Card2.png')},
           ]}
-          renderItem={({item}) => (
+          renderItem={({item}: any) => (
             <View>
               <Image
                 source={item.image}
@@ -246,7 +241,6 @@ useEffect(()=>{
         <ButtonPrimary style={styles.payButton} onPress={handlePayment}>
           Pay now
         </ButtonPrimary>
-       
       </View>
     </ScrollView>
   );
@@ -276,16 +270,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     width: '50%',
     marginBottom: 20,
-  },
-  modalContent: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginHorizontal: 20,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 20,
   },
 });

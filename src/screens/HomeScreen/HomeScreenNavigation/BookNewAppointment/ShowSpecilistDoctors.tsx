@@ -14,6 +14,7 @@ import {ThunkDispatch} from '@reduxjs/toolkit';
 import {Dimensions} from 'react-native';
 
 import {
+  fetchDoctorByDate,
   fetchDoctors,
   fetchDoctorsBySearch,
   fetchDoctorsBySearchAndSort,
@@ -32,7 +33,7 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
   const [address, setAddress] = React.useState('');
   const [isRefreshing, setIsRefreshing] = React.useState(false);
   const [showModal, setShowModal] = React.useState(false);
-  const [date, setDate]: any = React.useState(null);
+  const [date, setDate]: any = React.useState('');
   const [longitude, setLongitude] = React.useState(0);
   const [latitude, setLatitude] = React.useState(0);
   const [showTooltip, setShowTooltip] = React.useState(false);
@@ -50,9 +51,13 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
   };
 
   const handleSearch = async () => {
-    dispatch(
-      fetchDoctorsBySearch({search, address, date, latitude, longitude}),
-    );
+    if (!search && !address) {
+      dispatch(fetchDoctorByDate({date}));
+    } else {
+      dispatch(
+        fetchDoctorsBySearch({search, address, date, latitude, longitude}),
+      );
+    }
   };
   const getAverageRating = (feedbacks: any) => {
     const feedback =
@@ -77,11 +82,13 @@ const ShowSpecilistDoctors = ({navigation}: any) => {
               <Text style={styles.title}>Book an Appointment</Text>
             </View>
           </Appbar.Header>
-          <SearchBar
-            placeholder="Doctor, Specialist"
-            value={search}
-            onChangeText={setSearch}
-          />
+          <View style={{marginHorizontal: 20}}>
+            <SearchBar
+              placeholder="Doctor, Specialist"
+              value={search}
+              onChangeText={setSearch}
+            />
+          </View>
 
           <Spacer height={8} />
 

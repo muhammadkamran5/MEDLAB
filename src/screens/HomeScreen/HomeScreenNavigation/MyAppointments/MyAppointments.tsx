@@ -18,7 +18,9 @@ const MyAppointments = ({navigation}: any) => {
       <View style={styles.container}>
         <Text variant="headlineMedium">My Appointments</Text>
       </View>
-      <SearchBar placeholder="Search" value="" />
+      <View style={{marginHorizontal: 20}}>
+        <SearchBar placeholder="Search" value="" />
+      </View>
       <Spacer height={10} />
       <AppointmentTabBar />
       <View style={styles.newAppointmentButtonParent}>

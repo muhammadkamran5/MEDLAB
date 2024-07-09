@@ -39,14 +39,14 @@ const ScheduleComponent = ({date, times, slots, navigation , ...props}: any) => 
                   selectedTime == item && {backgroundColor: '#225B6E'},
                 ]}
                 onPress={() => {
-                  navigation.navigate('ConfirmAppointment' , {time: item.time, date: date , doctorID : props.extra});
+                  navigation.navigate('ConfirmAppointment' , {time: item, date: date , doctorID : props.extra});
                 }}>
                 <Text
                   style={[
                     styles.slotText,
                     selectedTime == item && {color: '#fff'},
                   ]}>
-                  {item.time} {selectedTime == item}
+                  {item} {selectedTime == item}
                 </Text>
               </TouchableOpacity>
             ),

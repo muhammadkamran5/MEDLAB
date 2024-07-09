@@ -41,6 +41,7 @@ const MedLabCommunityDetail = ({route, navigation}: any) => {
           .get();
         return {userId, data: userSnapshot.data()};
       });
+
       const usersData = await Promise.all(usersPromises);
       const usersDataMap: any = {};
       usersData.forEach((userData: any) => {
@@ -50,7 +51,7 @@ const MedLabCommunityDetail = ({route, navigation}: any) => {
         };
       });
       setUsersData(usersDataMap);
-      setLoading(false);
+      // setLoading(false);
     };
 
     if (community?.comments?.length > 0) {
@@ -72,11 +73,13 @@ const MedLabCommunityDetail = ({route, navigation}: any) => {
     );
     setCommentText('');
   };
-  console.log("Data" , usersData)
 
-  if (community?.comments?.length >= 0 && Object.keys(usersData).length == 0) {
-    
-    return <ActivityIndicator size="large" style={styles.loadingIndicator} />;
+  if (loading || !community?.comments) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+      </View>
+    );
   }
 
   return (
@@ -180,7 +183,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     height: 40,
   },
-  loadingIndicator: {
+  loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',

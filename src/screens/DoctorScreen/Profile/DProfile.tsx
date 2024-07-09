@@ -29,13 +29,21 @@ import {
   updateUser,
 } from '../../../redux/reducers/userReducer';
 import MenuItem from 'react-native-paper/lib/typescript/components/Menu/MenuItem';
-import { setIsLogin } from '../../../redux/reducers/isLoginReducer';
+import {setIsLogin} from '../../../redux/reducers/isLoginReducer';
 
 const DProfile = ({navigation}: any) => {
+  auth().onAuthStateChanged(user => {
+    if (user) {
+      dispatch(fetchCurrentUser(user.uid));
+    } else {
+      dispatch(setIsLogin(false));
+      navigation.navigate('MainSignin');
+    }
+  });
   const user = useSelector((state: any) => state.user.currentUser);
   const isLogin = useSelector((state: any) => state.isLogin.isLogin);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  console.log(isLogin)
+  console.log(isLogin);
 
   const [profileState, setProfileState] = useState({
     isEditingMode: false,
@@ -257,7 +265,6 @@ const DProfile = ({navigation}: any) => {
             title="Logout"
             onPress={() => {
               dispatch(logoutUser());
-              dispatch(setIsLogin(false))
             }}
           />
         </Menu>

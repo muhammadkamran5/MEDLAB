@@ -8,7 +8,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import {ActivityIndicator, Appbar, Button, Text} from 'react-native-paper';
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import BackIcon from '../.../../../../../../assets/Back.svg';
 import DoctorInformationCard from '../../../../components/DoctorInformationCard';
 import Spacer from '../../../../components/Spacer';
@@ -27,6 +27,7 @@ const DoctorDetail = ({route, navigation}: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const [averageRating, setAverageRating] = React.useState<number>(0);
   const [isRefreshing, setIsRefreshing] = React.useState<boolean>(false);
+  const [appointments, setAppointments]: any = useState({});
 
   const {width} = useWindowDimensions();
   useEffect(() => {
@@ -45,19 +46,18 @@ const DoctorDetail = ({route, navigation}: any) => {
       setAverageRating(average && average);
     };
     getAverage();
-    const fetchDates = async()=>{
+    const fetchDates = async () => {
       const userRef = firestore().collection('users').doc(id);
       const appointmentsQuery = userRef.collection('available_slots');
-  
+
       const appointmentsSnapshot = await appointmentsQuery.get();
       const appointments = appointmentsSnapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
       }));
-
-      console.log(appointments)
-    }
-    fetchDates()
+      setAppointments(appointments);
+    };
+    fetchDates();
   }, [doctor]);
 
   return (
@@ -99,17 +99,22 @@ const DoctorDetail = ({route, navigation}: any) => {
             <Spacer height={7} />
             <FlatList
               horizontal
-              data={doctor?.availability && doctor?.availability[0]?.dates}
+              data={appointments && appointments}
               showsHorizontalScrollIndicator={false}
-              renderItem={({item}) => (
-                <ScheduleComponent
-                  date={item.date}
-                  times={item.time_slots}
-                  slots={item.time_slots.length}
-                  navigation={navigation}
-                  extra={doctor.uid}
-                />
-              )}
+              renderItem={({item}) => {
+            
+                return (
+                  <ScheduleComponent
+                    date={item.date.toDate().toDateString()}
+                    times={item.times.map((time: any) =>
+                      new Date(time).toLocaleTimeString('us', {hour: '2-digit', minute: '2-digit' , hour12: true})
+                    )}
+                    slots={item.times.length}
+                    navigation={navigation}
+                    extra={doctor.uid}
+                  />
+                );
+              }}
             />
             <Spacer height={7} />
             <ButtonPrimary

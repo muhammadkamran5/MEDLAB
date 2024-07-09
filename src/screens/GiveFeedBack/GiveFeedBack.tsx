@@ -12,6 +12,7 @@ import KInput from '../../components/KInput';
 import ButtonPrimary from '../../components/ButtonPrimary';
 import {updateUser} from '../../redux/reducers/userReducer';
 import BackIcon from '../../../assets/Back.svg';
+import { updateDoctor } from '../../redux/reducers/doctorReducer';
 
 const getCurrentDate = () =>
   new Date().toISOString().split('T')[0].replace(/-/g, '/');
@@ -53,7 +54,7 @@ const GiveFeedBack = ({navigation}: any) => {
       ];
     }
 
-    dispatch(updateUser({userID, userData: {feedbacks: updatedFeedbacks}}));
+    dispatch(updateDoctor({userID, userData: {feedbacks: updatedFeedbacks}}));
     ToastAndroid.show('Feedback added successfully', ToastAndroid.SHORT);
     navigation.goBack();
   };

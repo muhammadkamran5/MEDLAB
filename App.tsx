@@ -99,9 +99,16 @@ function App(): React.JSX.Element {
           </Stack.Screen>
         ) : isLogin ? (
           user.role == 'doctor' ? (
-            <Stack.Screen name="doctor">
-              {props => <DoctorScreen {...props} setLogin={setIsLogin} />}
-            </Stack.Screen>
+            <>
+              <Stack.Screen name="doctor">
+                {props => <DoctorScreen {...props} setLogin={setIsLogin} />}
+              </Stack.Screen>
+              <Stack.Screen
+                name="MainSignin"
+                component={MainSignin}
+                options={{headerShown: false}}
+              />
+            </>
           ) : (
             <>
               <Stack.Screen
@@ -127,6 +134,11 @@ function App(): React.JSX.Element {
               <Stack.Screen
                 name="GiveFeedBack"
                 component={GiveFeedBack}
+                options={{headerShown: false}}
+              />
+                  <Stack.Screen
+                name="MainSignin"
+                component={MainSignin}
                 options={{headerShown: false}}
               />
             </>
