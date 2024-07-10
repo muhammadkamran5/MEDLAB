@@ -15,6 +15,7 @@ import {ThunkDispatch} from '@reduxjs/toolkit';
 import {useSelector} from 'react-redux';
 import DropDownPicker from 'react-native-dropdown-picker';
 import ButtonPrimary from '../../components/ButtonPrimary';
+import {setIsLogin} from '../../redux/reducers/isLoginReducer';
 
 const MainSignin = ({navigation}: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
@@ -34,12 +35,16 @@ const MainSignin = ({navigation}: any) => {
       if (user) {
         if (u?.isFirstTime == 'yes') {
           setOpenModal(true);
+          dispatch(setIsLogin(true));
         } else if (u?.role == 'patient') {
-          navigation.navigate('BottomNavigation');
+          // navigation.navigate('BottomNavigation');
+          dispatch(setIsLogin(true));
+          console.log('Hello patience');
         } else if (u?.role == 'doctor') {
-          navigation.navigate('doctor');
+          // navigation.navigate('doctor');
+          dispatch(setIsLogin(true));
         } else {
-          console.log('User is not login');
+          dispatch(setIsLogin(true));
         }
       }
     });
@@ -105,8 +110,8 @@ const MainSignin = ({navigation}: any) => {
           mode="contained"
           buttonColor="#225B6E"
           style={styles.signInNumber}
-          onPress={() => navigation.navigate('SignInPhone')}>
-          Sign in with mobile number
+          onPress={() => navigation.navigate('SignInEmail')}>
+          Sign in with Email
         </Button>
         <Text style={styles.orText}>or</Text>
         <Button
@@ -117,23 +122,7 @@ const MainSignin = ({navigation}: any) => {
           onPress={onFacebookButtonPress}>
           Sign in with Facebook
         </Button>
-        {/* <LoginButton
-          onLoginFinished={
-            (error, result) => {
-              if (error) {
-                console.log("login has error: " + error);
-              } else if (result.isCancelled) {
-                console.log("login is cancelled.");
-              } else {
-                AccessToken.getCurrentAccessToken().then(
-                  (data) => {
-                    console.log(data?.accessToken.toString())
-                  }
-                )
-              }
-            }
-          }
-          onLogoutFinished={() => console.log("logout.")}/> */}
+
         <Spacer height={14} />
         <Button
           mode="contained"

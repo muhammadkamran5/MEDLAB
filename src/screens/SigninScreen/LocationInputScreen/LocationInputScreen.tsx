@@ -6,9 +6,13 @@ import auth from '@react-native-firebase/auth';
 
 import Logo from '../../../../assets/medlablogo/medlablogo.svg';
 import Spacer from '../../../components/Spacer';
+import { useDispatch } from 'react-redux';
+import { ThunkDispatch } from '@reduxjs/toolkit';
+import { setIsLogin } from '../../../redux/reducers/isLoginReducer';
 
 const LocationInputScreen = ({navigation, ...props}: any) => {
   const [address, setAddress] = React.useState('');
+  const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const [allowEditing, setAllowEditing] = React.useState(true);
   const [longitude, setLongitude] = useState(0);
   const [latitude, setLatitude] = useState(0);
@@ -65,7 +69,7 @@ const LocationInputScreen = ({navigation, ...props}: any) => {
                 },
                 isFirstTime : 'no'
               });
-            props.setLogin(true);
+            dispatch(setIsLogin(true))
           }}>
           Continue
         </Button>

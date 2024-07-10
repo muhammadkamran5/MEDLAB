@@ -10,28 +10,25 @@ import {
   ActivityIndicator,
   Appbar,
   Button,
-  IconButton,
   Menu,
   Text,
   TextInput,
 } from 'react-native-paper';
-import Spacer from '../../../components/Spacer';
+import Spacer from '../../components/Spacer';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import ButtonPrimary from '../../../components/ButtonPrimary';
-import ButtonSecondary from '../../../components/ButtonSecondary';
-import KInput from '../../../components/KInput';
+import ButtonPrimary from '../../components/ButtonPrimary';
+import ButtonSecondary from '../../components/ButtonSecondary';
+import KInput from '../../components/KInput';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {
   fetchCurrentUser,
   logoutUser,
   updateUser,
-} from '../../../redux/reducers/userReducer';
-import MenuItem from 'react-native-paper/lib/typescript/components/Menu/MenuItem';
-import {setIsLogin} from '../../../redux/reducers/isLoginReducer';
+} from '../../redux/reducers/userReducer';
+import {setIsLogin} from '../../redux/reducers/isLoginReducer';
 
-const DProfile = ({navigation}: any) => {
+const AProfile = ({navigation}: any) => {
   auth().onAuthStateChanged(user => {
     if (user) {
       dispatch(fetchCurrentUser(user.uid));
@@ -43,7 +40,6 @@ const DProfile = ({navigation}: any) => {
   const user = useSelector((state: any) => state.user.currentUser);
   const isLogin = useSelector((state: any) => state.isLogin.isLogin);
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
-  console.log(isLogin);
 
   const [profileState, setProfileState] = useState({
     isEditingMode: false,
@@ -342,7 +338,7 @@ const DProfile = ({navigation}: any) => {
   );
 };
 
-export default DProfile;
+export default AProfile;
 
 const styles = StyleSheet.create({
   container: {
