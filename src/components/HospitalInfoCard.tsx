@@ -1,15 +1,15 @@
-import {Image, StyleSheet, View} from 'react-native';
+import {Image, Pressable, StyleSheet, View} from 'react-native';
 import React from 'react';
 import {Text} from 'react-native-paper';
 import StarRating from 'react-native-star-rating-widget';
 
-
 interface cardProps {
   title: string;
-  email ?: string;
+  email?: string;
   location: string;
   ratingCount?: number;
-  rating ?: number
+  rating?: number;
+  onPress?: () => void;
 }
 
 const HospitalInfoCard = ({
@@ -17,10 +17,11 @@ const HospitalInfoCard = ({
   email,
   location,
   ratingCount,
-  rating
+  rating,
+  onPress,
 }: cardProps) => {
   return (
-    <View style={styles.cardContainer}>
+    <Pressable style={styles.cardContainer} onPress={onPress}>
       <Image
         source={require('../../assets/sampleDoctor.png')}
         style={styles.image}
@@ -35,10 +36,12 @@ const HospitalInfoCard = ({
         </Text>
         <View style={styles.starRating}>
           <StarRating rating={rating || 0} onChange={() => {}} starSize={20} />
-          <Text>{rating}/5.0({ratingCount})</Text>
+          <Text>
+            {rating}/5.0({ratingCount})
+          </Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 

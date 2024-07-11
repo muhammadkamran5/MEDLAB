@@ -1,11 +1,11 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import AdminHome from './Home/AdminHome';
+
 import HomeIcon from '../../../assets/HomeIcon.svg';
 import UserIcon from '../../../assets/User.svg';
-
 import {colors} from '../../../themes/theme';
+
 import AProfile from './AProfile';
 import AdminHomeNavigation from './Home/AdminHomeNavigation';
 const Tab = createBottomTabNavigator();

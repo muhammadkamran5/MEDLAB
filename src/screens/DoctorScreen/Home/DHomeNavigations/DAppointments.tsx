@@ -8,7 +8,6 @@ import {
   Text,
   TextInput,
 } from 'react-native-paper';
-import DropDownPicker from 'react-native-dropdown-picker';
 import Spacer from '../../../../components/Spacer';
 import ButtonSecondary from '../../../../components/ButtonSecondary';
 import ButtonPrimary from '../../../../components/ButtonPrimary';
@@ -16,8 +15,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import firestore from '@react-native-firebase/firestore';
 import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import {dateObjectToString, timeStampToTime} from '../../../../Utils/dateTime';
-import {ThunkDispatch} from '@reduxjs/toolkit';
-import {updateUser} from '../../../../redux/reducers/userReducer';
+
 
 const DAppointments = ({route, navigation}: any) => {
   const {clinic_id} = route.params;

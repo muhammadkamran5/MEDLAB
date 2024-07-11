@@ -7,7 +7,7 @@ const isLoginSlic = createSlice({
   },
   reducers: {
     setIsLogin: (state, action) => {
-      state.isLogin = action.payload;
+      state.isLogin =  action.payload;
     },
   },
 });

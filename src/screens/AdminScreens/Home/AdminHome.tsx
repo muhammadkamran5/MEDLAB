@@ -58,10 +58,7 @@ const AdminHome = ({navigation}: any) => {
     }
   }, [user]);
 
-  const getClinicName = () => {
-    const clinic = clinics.find((c: any) => c.value === selectedClinic);
-    return clinic ? clinic.label : '';
-  };
+
   const isLogin = useSelector((state: any) => state.isLogin.isLogin);
   console.log(isLogin);
 

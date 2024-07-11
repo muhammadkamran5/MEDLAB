@@ -8,13 +8,16 @@ import HospitalCard from '../../../components/HospitalInfoCard';
 import {ThunkDispatch} from '@reduxjs/toolkit';
 import {useDispatch, useSelector} from 'react-redux';
 import {fetchAllClinics} from '../../../redux/reducers/clinicsReducer';
+import {useFocusEffect} from '@react-navigation/native';
 
 const AAllHospitals = ({navigation}: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const clinic = useSelector((state: any) => state.clinic);
-  useEffect(() => {
-    dispatch(fetchAllClinics());
-  });
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(fetchAllClinics());
+    }, []),
+  );
   return (
     <>
       <Appbar.Header>
@@ -34,6 +37,9 @@ const AAllHospitals = ({navigation}: any) => {
           renderItem={({item}) => (
             <>
               <HospitalCard
+                onPress={() =>
+                  navigation.navigate('AHospitalDetail', {id: item?.id})
+                }
                 title={item.name}
                 location={item.address}
                 ratingCount={item?.feedbacks?.length || 0}

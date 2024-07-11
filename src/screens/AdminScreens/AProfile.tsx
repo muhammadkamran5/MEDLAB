@@ -5,6 +5,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
+
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
@@ -14,6 +15,7 @@ import {
   Text,
   TextInput,
 } from 'react-native-paper';
+
 import Spacer from '../../components/Spacer';
 import auth from '@react-native-firebase/auth';
 import ButtonPrimary from '../../components/ButtonPrimary';
@@ -30,11 +32,9 @@ import {setIsLogin} from '../../redux/reducers/isLoginReducer';
 
 const AProfile = ({navigation}: any) => {
   auth().onAuthStateChanged(user => {
-    if (user) {
-      dispatch(fetchCurrentUser(user.uid));
-    } else {
+    console.log('hello');
+    if (!user) {
       dispatch(setIsLogin(false));
-      navigation.navigate('MainSignin');
     }
   });
   const user = useSelector((state: any) => state.user.currentUser);

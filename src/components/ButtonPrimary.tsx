@@ -21,6 +21,7 @@ const ButtonPrimary = ({
 }: any) => {
   return (
     <Button
+    
       buttonColor={buttonColor || colors.PRIMARY}
       {...props}
       style={[{borderRadius: 5}, style]}

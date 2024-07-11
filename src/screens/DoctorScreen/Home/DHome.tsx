@@ -48,6 +48,8 @@ const DHome = ({navigation}: any) => {
   const [selectedClinic, setSelectedClinic]: any = useState(null);
   const [isVisible, setVisible]: any = useState(false);
   const [isOpen, setOpen] = useState(false);
+  const isLogin = useSelector((state: any) => state.isLogin.isLogin);
+  console.log("Hello")
   useEffect(() => {
     if (user && Array.isArray(user.clinic_id)) {
       const fetchClinics = async () => {
@@ -69,8 +71,8 @@ const DHome = ({navigation}: any) => {
     const clinic = clinics.find((c: any) => c.value === selectedClinic);
     return clinic ? clinic.label : '';
   };
-  const isLogin = useSelector((state: any) => state.isLogin.isLogin);
-  console.log(isLogin);
+
+
 
   const data = [
     {
