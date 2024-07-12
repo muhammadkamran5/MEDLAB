@@ -1,4 +1,4 @@
-import {Alert, Modal, StyleSheet, View} from 'react-native';
+import {Alert, LogBox, Modal, StyleSheet, View} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import {ActivityIndicator, Appbar, Text} from 'react-native-paper';
 import BackIcon from '../../../../assets/Back.svg';
@@ -13,6 +13,11 @@ import {colors} from '../../../../themes/theme';
 import Spacer from '../../../components/Spacer';
 import {Menu} from 'react-native-paper';
 import {useFocusEffect} from '@react-navigation/native';
+import {
+  fetchServicesByClinicID,
+  fetchServicesByIds,
+} from '../../../redux/reducers/servicesReducer';
+import ServiceTag from '../../../components/ServiceTag';
 
 const HospitalDetail = ({route, navigation}: any) => {
   const {id} = route.params;
@@ -22,11 +27,13 @@ const HospitalDetail = ({route, navigation}: any) => {
   const [longitude, setLongitude] = useState(0);
   const [visible, setVisible] = useState(false);
   const [isModalVisble, setIsModalVisible] = useState(true);
+  const services = useSelector((state: any) => state.services);
+  console.log(services);
 
   useFocusEffect(
     React.useCallback(() => {
       dispatch(fetchClinicById(id));
-    }, []),
+    }, [dispatch, id]),
   );
 
   useEffect(() => {
@@ -35,6 +42,12 @@ const HospitalDetail = ({route, navigation}: any) => {
       setLongitude(parseFloat(clinic.location.lng) || 0);
     }
   }, [clinic]);
+
+  useEffect(() => {
+    if (clinic?.services?.length) {
+      dispatch(fetchServicesByIds(clinic.services));
+    }
+  }, [clinic?.services]);
 
   const confirmDelete = () => {
     Alert.alert('Delete', 'Are you sure you want to delete this hospital?', [
@@ -100,6 +113,17 @@ const HospitalDetail = ({route, navigation}: any) => {
           <Text variant="labelMedium">Timings: </Text>
           {clinic?.open_time} - {clinic?.close_time}
         </Text>
+
+        <Text variant="headlineSmall">Services: </Text>
+        <View style={{flexDirection: 'row', gap: 10, flexWrap: 'wrap'}}>
+          {services?.length ? (
+            services.map((service: any) => (
+              <ServiceTag key={service.id} service={service} />
+            ))
+          ) : (
+            <Text>No Services Available</Text>
+          )}
+        </View>
         <Text variant="headlineSmall">Location:</Text>
         <Spacer height={10} />
         {latitude && longitude ? (
@@ -133,7 +157,7 @@ const HospitalDetail = ({route, navigation}: any) => {
             <View
               style={{
                 flex: 1,
-                borderRadius : 5, 
+                borderRadius: 5,
                 justifyContent: 'center',
                 backgroundColor: 'gray',
               }}>

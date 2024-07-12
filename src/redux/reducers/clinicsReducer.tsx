@@ -51,6 +51,18 @@ export const updateClinicById = createAsyncThunk(
     }
   },
 );
+export const addClinic = createAsyncThunk(
+  'user/addClinic',
+  async (data: any) => {
+    try {
+      const res = await firestore().collection('clinic').add(data);
+      return {id: res.id, ...data};
+    } catch (error) {
+      console.log(error);
+    }
+  },
+);
+
 const ClinicSlice = createSlice({
   name: 'clinic',
   initialState: initialState,
@@ -79,6 +91,12 @@ const ClinicSlice = createSlice({
         return action.payload;
       })
       .addCase(updateClinicById.rejected, (state, action) => {
+        return state;
+      })
+      .addCase(addClinic.fulfilled, (state, action) => {
+        return action.payload;
+      })
+      .addCase(addClinic.rejected, (state, action) => {
         return state;
       });
   },

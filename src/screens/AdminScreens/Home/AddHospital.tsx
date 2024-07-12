@@ -15,26 +15,27 @@ import ButtonSecondary from '../../../components/ButtonSecondary';
 import {DateTimePickerAndroid} from '@react-native-community/datetimepicker';
 import BackIcon from '../../../../assets/Back.svg';
 import {ThunkDispatch} from '@reduxjs/toolkit';
-import {updateClinicById} from '../../../redux/reducers/clinicsReducer';
+import {
+  addClinic,
+  updateClinicById,
+} from '../../../redux/reducers/clinicsReducer';
 import firestore from '@react-native-firebase/firestore';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {fetchAllServices} from '../../../redux/reducers/servicesReducer';
 import {useFocusEffect} from '@react-navigation/native';
 import ServiceTag from '../../../components/ServiceTag';
 
-const EditHospital = ({route, navigation}: any) => {
-  const {id} = route.params;
-  const clinic = useSelector((state: any) => state.clinic);
+const AddHospital = ({route, navigation}: any) => {
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const services = useSelector((state: any) => state.services);
-  const [location, setLocation] = useState(clinic?.address);
-  const [lng, setLng] = useState(clinic?.location?.lng);
-  const [lat, setLat] = useState(clinic?.location?.lat);
-  const [openTime, setOpenTime] = useState(clinic?.open_time);
-  const [closeTime, setCloseTime] = useState(clinic?.close_time);
-  const [name, setName] = useState(clinic?.name);
-  const [contactNumber, setContactNumber] = useState(clinic?.contactNumber);
-  const [email, setEmail] = useState(clinic?.email);
+  const [location, setLocation] = useState('');
+  const [lng, setLng] = useState(0);
+  const [lat, setLat] = useState(0);
+  const [openTime, setOpenTime] = useState('');
+  const [closeTime, setCloseTime] = useState('');
+  const [name, setName] = useState('');
+  const [contactNumber, setContactNumber] = useState('');
+  const [email, setEmail] = useState('');
   const [isLoading, setLoading] = useState(false);
   const [clinicServices, setClinicServices]: any = useState([]);
   const [allServices, setAllServices] = useState([
@@ -43,27 +44,9 @@ const EditHospital = ({route, navigation}: any) => {
   const [selectedService, setSelectedService]: any = useState();
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState();
-  console.log(clinic?.services);
+
   useEffect(() => {
-    const getServicesByClinic = async () => {
-      if (clinic?.services) {
-        const servicePromises = clinic.services.map((serviceId: any) =>
-          firestore().collection('services').doc(serviceId).get(),
-        );
-
-        const serviceDocs = await Promise.all(servicePromises);
-
-        setClinicServices(
-          serviceDocs.map(doc => ({
-            ...doc.data(),
-            id: doc.id,
-          })),
-        );
-      }
-    };
-    getServicesByClinic();
     dispatch(fetchAllServices());
-
     LogBox.ignoreLogs(['VirtualizedLists should never be nested']);
   }, []);
 
@@ -98,14 +81,51 @@ const EditHospital = ({route, navigation}: any) => {
   };
 
   return (
-    <ScrollView
-      contentContainerStyle={{justifyContent: 'center', paddingVertical: 30}}>
+    <ScrollView contentContainerStyle={{flex: 1}}>
       <Appbar.Header>
         <BackIcon
           onPress={() => navigation.goBack()}
           style={{marginLeft: 20}}
         />
         <Appbar.Content title="Edit Hospital" style={{marginLeft: 10}} />
+        <Appbar.Action
+          icon={'content-save'}
+          style={{paddingRight: 10}}
+          onPress={() => {
+            // Ensure not any field is empty
+            if (
+              name &&
+              location &&
+              email &&
+              contactNumber &&
+              openTime &&
+              closeTime
+            ) {
+              dispatch(
+                addClinic({
+                  name,
+                  address: location,
+                  contactNumber,
+                  email,
+                  location: {
+                    lng,
+                    lat,
+                  },
+                  open_time: openTime,
+                  close_time: closeTime,
+                  services: clinicServices.map((service: any) => service.id),
+                }),
+              );
+              ToastAndroid.show('Added Successfully', ToastAndroid.SHORT);
+              navigation.goBack();
+            } else {
+              ToastAndroid.show(
+                'Please fill all the fields',
+                ToastAndroid.SHORT,
+              );
+            }
+          }}
+        />
       </Appbar.Header>
       <View style={styles.container}>
         <TextInput
@@ -221,45 +241,12 @@ const EditHospital = ({route, navigation}: any) => {
               </>
             ))}
         </View>
-
-        <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
-          <ButtonSecondary onPress={() => navigation.goBack()}>
-            Cancel
-          </ButtonSecondary>
-          <ButtonPrimary
-            onPress={async () => {
-              setLoading(true);
-              await dispatch(
-                updateClinicById({
-                  id: clinic?.id,
-                  name,
-                  email,
-                  contactNumber,
-                  location: {
-                    lat,
-                    lng,
-                  },
-                  open_time: openTime,
-                  close_time: closeTime,
-                  services: clinicServices?.map((item: any) => item.id),
-                }),
-              );
-              ToastAndroid.show(
-                'Hospital updated successfully',
-                ToastAndroid.SHORT,
-              );
-              navigation.goBack();
-            }}
-            loading={isLoading}>
-            Update
-          </ButtonPrimary>
-        </View>
       </View>
     </ScrollView>
   );
 };
 
-export default EditHospital;
+export default AddHospital;
 
 const styles = StyleSheet.create({
   container: {
