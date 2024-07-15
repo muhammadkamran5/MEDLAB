@@ -28,8 +28,10 @@ const CustomTabBar = ({navigationState, jumpTo, tabs}: any) => {
 const styles = StyleSheet.create({
   tabBarContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    marginHorizontal : 20,
+
     padding: 10,
   },
   tabContainer: {

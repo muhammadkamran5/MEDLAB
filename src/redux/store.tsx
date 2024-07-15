@@ -6,6 +6,7 @@ import clinicsReducer from './reducers/clinicsReducer';
 import isLoginReducer from './reducers/isLoginReducer';
 import logger from 'redux-logger';
 import servicesReducer from './reducers/servicesReducer';
+import appointmentReducer from './reducers/appointmentReducer';
 
 const store = configureStore({
   reducer: {
@@ -14,7 +15,8 @@ const store = configureStore({
     community : communityReducer , 
     clinic : clinicsReducer , 
     isLogin : isLoginReducer , 
-    services : servicesReducer
+    services : servicesReducer,
+    appointments: appointmentReducer
   },
   // middleware :(getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
 });

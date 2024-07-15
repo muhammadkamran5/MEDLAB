@@ -21,6 +21,7 @@ import ServiceTag from '../../../components/ServiceTag';
 
 const HospitalDetail = ({route, navigation}: any) => {
   const {id} = route.params;
+
   const dispatch = useDispatch<ThunkDispatch<any, any, any>>();
   const clinic = useSelector((state: any) => state.clinic);
   const [latitude, setLatitude] = useState(0);
@@ -28,12 +29,16 @@ const HospitalDetail = ({route, navigation}: any) => {
   const [visible, setVisible] = useState(false);
   const [isModalVisble, setIsModalVisible] = useState(true);
   const services = useSelector((state: any) => state.services);
-  console.log(services);
 
   useFocusEffect(
     React.useCallback(() => {
       dispatch(fetchClinicById(id));
     }, [dispatch, id]),
+  );
+  useFocusEffect(
+    React.useCallback(() => {
+      dispatch(fetchServicesByIds(clinic.services));
+    }, [clinic]),
   );
 
   useEffect(() => {
@@ -43,11 +48,7 @@ const HospitalDetail = ({route, navigation}: any) => {
     }
   }, [clinic]);
 
-  useEffect(() => {
-    if (clinic?.services?.length) {
-      dispatch(fetchServicesByIds(clinic.services));
-    }
-  }, [clinic?.services]);
+  useEffect(() => {}, [clinic?.services]);
 
   const confirmDelete = () => {
     Alert.alert('Delete', 'Are you sure you want to delete this hospital?', [

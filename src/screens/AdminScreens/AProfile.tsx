@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Appbar,
   Button,
+  IconButton,
   Menu,
   Text,
   TextInput,
@@ -279,11 +280,13 @@ const AProfile = ({navigation}: any) => {
               <Text variant="headlineMedium">Profile</Text>
               <Spacer height={10} />
               <View style={styles.profileMain}>
-                {user?.photo && (
+                {user?.photo ? (
                   <Image
                     source={{uri: user?.photo}}
                     style={styles.profileImage}
                   />
+                ) : (
+                  <IconButton icon={'account-circle'} size={40}/>
                 )}
                 <View>
                   <Text variant="bodyLarge">

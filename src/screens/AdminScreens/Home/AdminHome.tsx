@@ -66,7 +66,7 @@ const AdminHome = ({navigation}: any) => {
     {
       title: 'Appointments',
       image: <Appointments />,
-      navigationUrl: 'DAppointments',
+      navigationUrl: 'AAppointments',
     },
     {
       title: 'Records',

@@ -10,12 +10,14 @@ import AllQuestions from '../../DoctorScreen/Home/DHomeNavigations/Questions/All
 import HospitalDetail from './HospitalDetail'
 import EditHospital from './EditHospital'
 import AddHospital from './AddHospital'
+import AAppointments from './AAppointments'
 
 const Stack = createNativeStackNavigator()
 const AdminHomeNavigation = () => {
   return (
     <Stack.Navigator>
         <Stack.Screen name='AdminHome' component={AdminHome} options={{headerShown:false}}/>
+        <Stack.Screen name='AAppointments' component={AAppointments} options={{headerShown:false}}/>
         <Stack.Screen name='Records' component={Records} options={{headerShown:false}}/>
         <Stack.Screen name='Community' component={MedLabCommunity} options={{headerShown:false}}/>
         <Stack.Screen name='CommunityDetail' component={MedLabCommunityDetail} options={{headerShown:false}}/>

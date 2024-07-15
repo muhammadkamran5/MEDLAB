@@ -21,7 +21,7 @@ import Spacer from '../../../../components/Spacer';
 import KInput from '../../../../components/KInput';
 import ButtonPrimary from '../../../../components/ButtonPrimary';
 import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import firestore, {firebase} from '@react-native-firebase/firestore';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {useDispatch, useSelector} from 'react-redux';
 import {ThunkDispatch} from '@reduxjs/toolkit';
@@ -116,13 +116,18 @@ const ConfirmAppointment = ({route, navigation}: any) => {
 
   const handlePayment = async () => {
     try {
+      // Convert selectedDate and selectedTime to Firebase Timestamps
+      const appointmentDate = new Date(selectedDate);
+      const [hours, minutes] = selectedTime.split(':');
+      appointmentDate.setHours(parseInt(hours), parseInt(minutes));
+
       await firestore().collection('appointments').add({
         doctor_id: doctorID,
         note: note,
         patient_id: currentUser?.uid,
-        status: 'Confirmed',
-        time: selectedTime,
-        date: selectedDate,
+        status: 'pending',
+        time: firebase.firestore.Timestamp.fromDate(appointmentDate),
+        date: firebase.firestore.Timestamp.fromDate(new Date(selectedDate)),
       });
 
       ToastAndroid.show('Appointment added successfully', ToastAndroid.SHORT);

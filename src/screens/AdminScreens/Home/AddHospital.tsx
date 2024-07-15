@@ -87,7 +87,7 @@ const AddHospital = ({route, navigation}: any) => {
           onPress={() => navigation.goBack()}
           style={{marginLeft: 20}}
         />
-        <Appbar.Content title="Edit Hospital" style={{marginLeft: 10}} />
+        <Appbar.Content title="Add Hospital" style={{marginLeft: 10}} />
         <Appbar.Action
           icon={'content-save'}
           style={{paddingRight: 10}}
